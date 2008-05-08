@@ -1,0 +1,10 @@
+<%= flash[:error] %>
+<% form_tag :action => "login_check" do %>
+  <p>
+    <label for="openid_url">OpenID:</label>
+    <%= text_field_tag "openid_url", params[:openid_url] %>
+  </p>
+  <p>
+    <%= submit_tag 'Sign in', :disable_with => "Signing in..." %>
+  </p>
+<% end %>

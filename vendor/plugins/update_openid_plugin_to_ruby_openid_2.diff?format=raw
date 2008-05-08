@@ -1,0 +1,657 @@
+diff --git a/README b/README
+index 2224280..7cb0e4c 100644
+--- a/README
++++ b/README
+@@ -8,7 +8,7 @@ Provides a thin wrapper around the excellent ruby-openid gem from JanRan. Be sur
+ To understand what OpenID is about and how it works, it helps to read the documentation for lib/openid/consumer.rb
+ from that gem.
+ 
+-The specification used is http://openid.net/specs/openid-authentication-1_1.html (not the 2.0 draft).
++The specification used is http://openid.net/specs/openid-authentication-2_0.html.
+ 
+ 
+ Prerequisites
+diff --git a/generators/open_id_authentication_tables/open_id_authentication_tables_generator.rb b/generators/open_id_authentication_tables/open_id_authentication_tables_generator.rb
+new file mode 100644
+index 0000000..6f78afc
+--- /dev/null
++++ b/generators/open_id_authentication_tables/open_id_authentication_tables_generator.rb
+@@ -0,0 +1,11 @@
++class OpenIdAuthenticationTablesGenerator < Rails::Generator::NamedBase
++  def initialize(runtime_args, runtime_options = {})
++    super
++  end
++
++  def manifest
++    record do |m|
++      m.migration_template 'migration.rb', 'db/migrate'
++    end
++  end
++end
+diff --git a/generators/open_id_authentication_tables/templates/migration.rb b/generators/open_id_authentication_tables/templates/migration.rb
+new file mode 100644
+index 0000000..ef2a0cf
+--- /dev/null
++++ b/generators/open_id_authentication_tables/templates/migration.rb
+@@ -0,0 +1,20 @@
++class <%= class_name %> < ActiveRecord::Migration
++  def self.up
++    create_table :open_id_authentication_associations, :force => true do |t|
++      t.integer :issued, :lifetime
++      t.string :handle, :assoc_type
++      t.binary :server_url, :secret
++    end
++
++    create_table :open_id_authentication_nonces, :force => true do |t|
++      t.integer :timestamp, :null => false
++      t.string :server_url, :null => true
++      t.string :salt, :null => false
++    end
++  end
++
++  def self.down
++    drop_table :open_id_authentication_associations
++    drop_table :open_id_authentication_nonces
++  end
++end
+diff --git a/generators/upgrade_open_id_authentication_tables/templates/migration.rb b/generators/upgrade_open_id_authentication_tables/templates/migration.rb
+new file mode 100644
+index 0000000..d13bbab
+--- /dev/null
++++ b/generators/upgrade_open_id_authentication_tables/templates/migration.rb
+@@ -0,0 +1,26 @@
++class <%= class_name %> < ActiveRecord::Migration
++  def self.up
++    drop_table :open_id_authentication_settings
++    drop_table :open_id_authentication_nonces
++
++    create_table :open_id_authentication_nonces, :force => true do |t|
++      t.integer :timestamp, :null => false
++      t.string :server_url, :null => true
++      t.string :salt, :null => false
++    end
++  end
++
++  def self.down
++    drop_table :open_id_authentication_nonces
++
++    create_table :open_id_authentication_nonces, :force => true do |t|
++      t.integer :created
++      t.string :nonce
++    end
++
++    create_table :open_id_authentication_settings, :force => true do |t|
++      t.string :setting
++      t.binary :value
++    end
++  end
++end
+diff --git a/generators/upgrade_open_id_authentication_tables/upgrade_open_id_authentication_tables_generator.rb b/generators/upgrade_open_id_authentication_tables/upgrade_open_id_authentication_tables_generator.rb
+new file mode 100644
+index 0000000..02fddd7
+--- /dev/null
++++ b/generators/upgrade_open_id_authentication_tables/upgrade_open_id_authentication_tables_generator.rb
+@@ -0,0 +1,11 @@
++class UpgradeOpenIdAuthenticationTablesGenerator < Rails::Generator::NamedBase
++  def initialize(runtime_args, runtime_options = {})
++    super
++  end
++
++  def manifest
++    record do |m|
++      m.migration_template 'migration.rb', 'db/migrate'
++    end
++  end
++end
+diff --git a/init.rb b/init.rb
+index 85225f5..df24387 100644
+--- a/init.rb
++++ b/init.rb
+@@ -1,8 +1,11 @@
+ begin
+-  gem 'ruby-openid', '=1.1.4'
+-  require 'openid'  
++  require 'openid'
+ rescue LoadError
+-  puts "Install the ruby-openid gem to enable OpenID support"
++  begin
++    gem 'ruby-openid', '>=2.0.4'
++  rescue Gem::LoadError
++    puts "Install the ruby-openid gem to enable OpenID support"
++  end
+ end
+ 
+-ActionController::Base.send :include, OpenIdAuthentication
+\ No newline at end of file
++ActionController::Base.send :include, OpenIdAuthentication
+diff --git a/lib/generators/open_id_authentication_tables/open_id_authentication_tables_generator.rb b/lib/generators/open_id_authentication_tables/open_id_authentication_tables_generator.rb
+deleted file mode 100644
+index 3bc1c05..0000000
+--- a/lib/generators/open_id_authentication_tables/open_id_authentication_tables_generator.rb
++++ /dev/null
+@@ -1,11 +0,0 @@
+-class OpenIdAuthenticationTablesGenerator < Rails::Generator::NamedBase
+-  def initialize(runtime_args, runtime_options = {})
+-    super
+-  end
+-
+-  def manifest
+-    record do |m|
+-      m.migration_template 'migration.rb', 'db/migrate'
+-    end
+-  end
+-end
+\ No newline at end of file
+diff --git a/lib/generators/open_id_authentication_tables/templates/migration.rb b/lib/generators/open_id_authentication_tables/templates/migration.rb
+deleted file mode 100644
+index 0be93a1..0000000
+--- a/lib/generators/open_id_authentication_tables/templates/migration.rb
++++ /dev/null
+@@ -1,28 +0,0 @@
+-class AddOpenIdAuthenticationTables < ActiveRecord::Migration
+-  def self.up
+-    create_table "open_id_authentication_associations", :force => true do |t|
+-      t.column "server_url", :binary
+-      t.column "handle", :string
+-      t.column "secret", :binary
+-      t.column "issued", :integer
+-      t.column "lifetime", :integer
+-      t.column "assoc_type", :string
+-    end
+-
+-    create_table "open_id_authentication_nonces", :force => true do |t|
+-      t.column "nonce", :string
+-      t.column "created", :integer
+-    end
+-
+-    create_table "open_id_authentication_settings", :force => true do |t|
+-      t.column "setting", :string
+-      t.column "value", :binary
+-    end
+-  end
+-
+-  def self.down
+-    drop_table "open_id_authentication_associations"
+-    drop_table "open_id_authentication_nonces"
+-    drop_table "open_id_authentication_settings"
+-  end
+-end
+\ No newline at end of file
+diff --git a/lib/open_id_authentication.rb b/lib/open_id_authentication.rb
+index 485ed7e..d59c65a 100644
+--- a/lib/open_id_authentication.rb
++++ b/lib/open_id_authentication.rb
+@@ -1,18 +1,20 @@
+ require 'uri'
++require 'openid/extensions/sreg'
++require 'openid/store/filesystem'
+ 
+ module OpenIdAuthentication
+   OPEN_ID_AUTHENTICATION_DIR = RAILS_ROOT + "/tmp/openids"
+-  
++
+   def self.store
+     @@store
+   end
+-  
++
+   def self.store=(value)
+     @@store = value
+   end
+-  
++
+   self.store = :db
+-  
++
+   def store
+     OpenIdAuthentication.store
+   end
+@@ -22,19 +24,20 @@ module OpenIdAuthentication
+ 
+   class Result
+     ERROR_MESSAGES = {
+-      :missing    => "Sorry, the OpenID server couldn't be found",
+-      :canceled   => "OpenID verification was canceled",
+-      :failed     => "Sorry, the OpenID verification failed"
++      :missing      => "Sorry, the OpenID server couldn't be found",
++      :canceled     => "OpenID verification was canceled",
++      :failed       => "Sorry, the OpenID verification failed",
++      :setup_needed => "OpenID verification needs setup"
+     }
+-    
++
+     def self.[](code)
+       new(code)
+     end
+-    
++
+     def initialize(code)
+       @code = code
+     end
+-    
++
+     def ===(code)
+       if code == :unsuccessful && unsuccessful?
+         true
+@@ -42,7 +45,7 @@ module OpenIdAuthentication
+         @code == code
+       end
+     end
+-    
++
+     ERROR_MESSAGES.keys.each { |state| define_method("#{state}?") { @code == state } }
+ 
+     def successful?
+@@ -52,7 +55,7 @@ module OpenIdAuthentication
+     def unsuccessful?
+       ERROR_MESSAGES.keys.include?(@code)
+     end
+-    
++
+     def message
+       ERROR_MESSAGES[@code]
+     end
+@@ -67,7 +70,6 @@ module OpenIdAuthentication
+     raise InvalidOpenId.new("#{url} is not an OpenID URL")
+   end
+ 
+-
+   protected
+     def normalize_url(url)
+       OpenIdAuthentication.normalize_url(url)
+@@ -87,39 +89,37 @@ module OpenIdAuthentication
+       end
+     end
+ 
+-
+   private
+     def begin_open_id_authentication(identity_url, fields = {})
+-      open_id_response = timeout_protection_from_identity_server { open_id_consumer.begin(identity_url) }
+-
+-      case open_id_response.status
+-      when OpenID::FAILURE
+-        yield Result[:missing], identity_url, nil
+-      when OpenID::SUCCESS
+-        add_simple_registration_fields(open_id_response, fields)
+-        redirect_to(open_id_redirect_url(open_id_response))
+-      end
++      open_id_request = open_id_consumer.begin(identity_url)
++      add_simple_registration_fields(open_id_request, fields)
++      redirect_to(open_id_redirect_url(open_id_request))
++    rescue OpenID::OpenIDError, Timeout::Error => e
++      logger.error("[OPENID] #{e}")
++      yield Result[:missing], identity_url, nil
+     end
+-  
++
+     def complete_open_id_authentication
+-      open_id_response = timeout_protection_from_identity_server { open_id_consumer.complete(params) }
+-      identity_url     = normalize_url(open_id_response.identity_url) if open_id_response.identity_url
++      params_with_path = params.reject { |key, value| request.path_parameters[key] }
++      open_id_response = timeout_protection_from_identity_server { open_id_consumer.complete(params_with_path, requested_url) }
++      identity_url     = normalize_url(open_id_response.endpoint.claimed_id) if open_id_response.endpoint.claimed_id
+ 
+       case open_id_response.status
+-      when OpenID::CANCEL
++      when OpenID::Consumer::SUCCESS
++        yield Result[:successful], identity_url, OpenID::SReg::Response.from_success_response(open_id_response)
++      when OpenID::Consumer::CANCEL
+         yield Result[:canceled], identity_url, nil
+-      when OpenID::FAILURE
+-        logger.info "OpenID authentication failed: #{open_id_response.msg}"
++      when OpenID::Consumer::FAILURE
+         yield Result[:failed], identity_url, nil
+-      when OpenID::SUCCESS
+-        yield Result[:successful], identity_url, open_id_response.extension_response('sreg')
+-      end      
++      when OpenID::Consumer::SETUP_NEEDED
++        yield Result[:setup_needed], open_id_response.setup_url, nil
++      end
+     end
+ 
+     def open_id_consumer
+       OpenID::Consumer.new(session, open_id_store)
+     end
+-    
++
+     def open_id_store
+       case store
+       when :db
+@@ -131,17 +131,21 @@ module OpenIdAuthentication
+       end
+     end
+ 
++    def add_simple_registration_fields(open_id_request, fields)
++      sreg_request = OpenID::SReg::Request.new
++      sreg_request.request_fields(Array(fields[:required]).map(&:to_s), true) if fields[:required]
++      sreg_request.request_fields(Array(fields[:optional]).map(&:to_s), false) if fields[:optional]
++      sreg_request.policy_url = fields[:policy_url] if fields[:policy_url]
++      open_id_request.add_extension(sreg_request)
++    end
+ 
+-    def add_simple_registration_fields(open_id_response, fields)
+-      open_id_response.add_extension_arg('sreg', 'required', [ fields[:required] ].flatten * ',') if fields[:required]
+-      open_id_response.add_extension_arg('sreg', 'optional', [ fields[:optional] ].flatten * ',') if fields[:optional]
++    def open_id_redirect_url(open_id_request)
++      open_id_request.return_to_args['open_id_complete'] = '1'
++      open_id_request.redirect_url(root_url, requested_url)
+     end
+-    
+-    def open_id_redirect_url(open_id_response)
+-      open_id_response.redirect_url(
+-        request.protocol + request.host_with_port + "/",
+-        open_id_response.return_to("#{request.protocol + request.host_with_port + request.relative_url_root + request.path}?open_id_complete=1")
+-      )     
++
++    def requested_url
++      "#{request.protocol + request.host_with_port + request.relative_url_root + request.path}"
+     end
+ 
+     def timeout_protection_from_identity_server
+@@ -151,7 +155,7 @@ module OpenIdAuthentication
+         def status
+           OpenID::FAILURE
+         end
+-        
++
+         def msg
+           "Identity server timed out"
+         end
+diff --git a/lib/open_id_authentication/association.rb b/lib/open_id_authentication/association.rb
+index 034f1f3..9654eae 100644
+--- a/lib/open_id_authentication/association.rb
++++ b/lib/open_id_authentication/association.rb
+@@ -6,4 +6,4 @@ module OpenIdAuthentication
+       OpenID::Association.new(handle, secret, issued, lifetime, assoc_type)
+     end
+   end
+-end
+\ No newline at end of file
++end
+diff --git a/lib/open_id_authentication/db_store.rb b/lib/open_id_authentication/db_store.rb
+index 3500a22..780fb6a 100644
+--- a/lib/open_id_authentication/db_store.rb
++++ b/lib/open_id_authentication/db_store.rb
+@@ -1,29 +1,19 @@
++require 'openid/store/interface'
++
+ module OpenIdAuthentication
+-  class DbStore < OpenID::Store
+-    def self.gc
++  class DbStore < OpenID::Store::Interface
++    def self.cleanup_nonces
+       now = Time.now.to_i
+-
+-      # remove old nonces
+-      nonces = Nonce.find(:all)
+-      nonces.each {|n| n.destroy if now - n.created > 6.hours} unless nonces.nil?
+-    
+-      # remove expired assocs
+-      assocs = Association.find(:all)
+-      assocs.each { |a| a.destroy if a.from_record.expired? } unless assocs.nil?
++      Nonce.delete_all(["timestamp > ? OR timestamp < ?", now + OpenID::Nonce.skew, now - OpenID::Nonce.skew])
+     end
+ 
+-
+-    def get_auth_key
+-      unless setting = Setting.find_by_setting('auth_key')
+-        auth_key = OpenID::Util.random_string(20)
+-        setting  = Setting.create(:setting => 'auth_key', :value => auth_key)
+-      end
+-
+-      setting.value
++    def self.cleanup_associations
++      now = Time.now.to_i
++      Association.delete_all(['issued + lifetime > ?',now])
+     end
+ 
+     def store_association(server_url, assoc)
+-      remove_association(server_url, assoc.handle)    
++      remove_association(server_url, assoc.handle)
+       Association.create(:server_url => server_url,
+                          :handle     => assoc.handle,
+                          :secret     => assoc.secret,
+@@ -32,49 +22,34 @@ module OpenIdAuthentication
+                          :assoc_type => assoc.assoc_type)
+     end
+ 
+-    def get_association(server_url, handle=nil)
+-      assocs = handle.blank? ? 
+-        Association.find_all_by_server_url(server_url) :
++    def get_association(server_url, handle = nil)
++      assocs = if handle.blank?
++          Association.find_all_by_server_url(server_url)
++        else
+           Association.find_all_by_server_url_and_handle(server_url, handle)
+-    
++        end
++
+       assocs.reverse.each do |assoc|
+-        a = assoc.from_record    
+-        if a.expired?
++        a = assoc.from_record
++        if a.expires_in == 0
+           assoc.destroy
+         else
+           return a
+         end
+       end if assocs.any?
+-    
++
+       return nil
+     end
+-  
++
+     def remove_association(server_url, handle)
+-      assoc = Association.find_by_server_url_and_handle(server_url, handle)
+-      unless assoc.nil?
+-        assoc.destroy
+-        return true
+-      end
+-      false
+-    end
+-  
+-    def store_nonce(nonce)
+-      use_nonce(nonce)
+-      Nonce.create :nonce => nonce, :created => Time.now.to_i
++      Association.delete_all(['server_url = ? AND handle = ?', server_url, handle]) > 0
+     end
+-  
+-    def use_nonce(nonce)
+-      nonce = Nonce.find_by_nonce(nonce)
+-      return false if nonce.nil?
+-    
+-      age = Time.now.to_i - nonce.created
+-      nonce.destroy
+ 
+-      age < 6.hours # max nonce age of 6 hours
+-    end
+-  
+-    def dumb?
+-      false
++    def use_nonce(server_url, timestamp, salt)
++      return false if Nonce.find_by_server_url_and_timestamp_and_salt(server_url, timestamp, salt)
++      return false if (timestamp - Time.now.to_i).abs > OpenID::Nonce.skew
++      Nonce.create(:server_url => server_url, :timestamp => timestamp, :salt => salt)
++      return true
+     end
+   end
+-end
+\ No newline at end of file
++end
+diff --git a/lib/open_id_authentication/nonce.rb b/lib/open_id_authentication/nonce.rb
+index 8570ffc..c52f6c5 100644
+--- a/lib/open_id_authentication/nonce.rb
++++ b/lib/open_id_authentication/nonce.rb
+@@ -2,4 +2,4 @@ module OpenIdAuthentication
+   class Nonce < ActiveRecord::Base
+     set_table_name :open_id_authentication_nonces
+   end
+-end
+\ No newline at end of file
++end
+diff --git a/lib/open_id_authentication/setting.rb b/lib/open_id_authentication/setting.rb
+deleted file mode 100644
+index ef7b6c5..0000000
+--- a/lib/open_id_authentication/setting.rb
++++ /dev/null
+@@ -1,5 +0,0 @@
+-module OpenIdAuthentication
+-  class Setting < ActiveRecord::Base  
+-    set_table_name :open_id_authentication_settings
+-  end
+-end
+\ No newline at end of file
+diff --git a/tasks/open_id_authentication_tasks.rake b/tasks/open_id_authentication_tasks.rake
+index 0b9cc52..c71434a 100644
+--- a/tasks/open_id_authentication_tasks.rake
++++ b/tasks/open_id_authentication_tasks.rake
+@@ -2,15 +2,29 @@ namespace :open_id_authentication do
+   namespace :db do
+     desc "Creates authentication tables for use with OpenIdAuthentication"
+     task :create => :environment do
+-      raise "Task unavailable to this database (no migration support)" unless ActiveRecord::Base.connection.supports_migrations?
++      generate_migration(["open_id_authentication_tables", "add_open_id_authentication_tables"])
++    end
++
++    desc "Upgrade authentication tables from ruby-openid 1.x.x to 2.x.x"
++    task :upgrade => :environment do
++      generate_migration(["upgrade_open_id_authentication_tables", "upgrade_open_id_authentication_tables"])
++    end
++
++    def generate_migration(args)
+       require 'rails_generator'
+       require 'rails_generator/scripts/generate'
+-      Rails::Generator::Scripts::Generate.new.run([ "open_id_authentication_tables", "add_open_id_authentication_tables" ])
++
++      if ActiveRecord::Base.connection.supports_migrations?
++        Rails::Generator::Scripts::Generate.new.run(args)
++      else
++        raise "Task unavailable to this database (no migration support)"
++      end
+     end
+ 
+     desc "Clear the authentication tables"
+     task :clear => :environment do
+-      OpenIdAuthentication::DbStore.gc
++      OpenIdAuthentication::DbStore.cleanup_nonces
++      OpenIdAuthentication::DbStore.cleanup_associations
+     end
+   end
+-end
+\ No newline at end of file
++end
+diff --git a/test/normalize_test.rb b/test/normalize_test.rb
+index 9081385..353caea 100644
+--- a/test/normalize_test.rb
++++ b/test/normalize_test.rb
+@@ -1,9 +1,4 @@
+-require 'test/unit'
+-require 'rubygems'
+-require 'active_support'
+-
+-RAILS_ROOT = File.dirname(__FILE__)
+-require File.dirname(__FILE__) + "/../lib/open_id_authentication"
++require File.dirname(__FILE__) + '/test_helper'
+ 
+ class NormalizeTest < Test::Unit::TestCase
+   include OpenIdAuthentication
+@@ -29,7 +24,7 @@ class NormalizeTest < Test::Unit::TestCase
+       assert_equal to, normalize_url(from)
+     end
+   end
+-
++  
+   def test_broken_open_id
+     assert_raises(InvalidOpenId) { normalize_url(nil) }
+     assert_raises(InvalidOpenId) { normalize_url("=name") }
+diff --git a/test/open_id_authentication_test.rb b/test/open_id_authentication_test.rb
+index 15da0ba..39d3969 100644
+--- a/test/open_id_authentication_test.rb
++++ b/test/open_id_authentication_test.rb
+@@ -1,14 +1,4 @@
+-require 'test/unit'
+-
+-require 'rubygems'
+-gem 'mocha'
+-require 'mocha'
+-
+-gem 'ruby-openid'
+-require 'openid'
+-
+-RAILS_ROOT = File.dirname(__FILE__)
+-require File.dirname(__FILE__) + "/../lib/open_id_authentication"
++require File.dirname(__FILE__) + '/test_helper'
+ 
+ class OpenIdAuthenticationTest < Test::Unit::TestCase
+   def setup
+@@ -19,8 +9,10 @@ class OpenIdAuthenticationTest < Test::Unit::TestCase
+   end
+ 
+   def test_authentication_should_fail_when_the_identity_server_is_missing
+-    @controller.stubs(:open_id_consumer).returns(stub(:begin => stub(:status => OpenID::FAILURE)))
+-    
++    open_id_consumer = mock()
++    open_id_consumer.expects(:begin).raises(OpenID::OpenIDError)
++    @controller.stubs(:open_id_consumer).returns(open_id_consumer)
++
+     @controller.send(:authenticate_with_open_id, "http://someone.example.com") do |result, identity_url|
+       assert result.missing?
+       assert_equal "Sorry, the OpenID server couldn't be found", result.message
+@@ -28,7 +20,9 @@ class OpenIdAuthenticationTest < Test::Unit::TestCase
+   end
+ 
+   def test_authentication_should_fail_when_the_identity_server_times_out
+-    @controller.stubs(:open_id_consumer).returns(stub(:begin => Proc.new { raise Timeout::Error, "Identity Server took too long." }))
++    open_id_consumer = mock()
++    open_id_consumer.expects(:begin).raises(Timeout::Error, "Identity Server took too long.")
++    @controller.stubs(:open_id_consumer).returns(open_id_consumer)
+ 
+     @controller.send(:authenticate_with_open_id, "http://someone.example.com") do |result, identity_url|
+       assert result.missing?
+@@ -37,8 +31,8 @@ class OpenIdAuthenticationTest < Test::Unit::TestCase
+   end
+ 
+   def test_authentication_should_begin_when_the_identity_server_is_present
+-    @controller.stubs(:open_id_consumer).returns(stub(:begin => stub(:status => OpenID::SUCCESS)))
+-    @controller.expects(:begin_open_id_authentication) 
++    @controller.stubs(:open_id_consumer).returns(stub(:begin => true))
++    @controller.expects(:begin_open_id_authentication)
+     @controller.send(:authenticate_with_open_id, "http://someone.example.com")
+   end
+-end
+\ No newline at end of file
++end
+diff --git a/test/status_test.rb b/test/status_test.rb
+index c98e037..15a265c 100644
+--- a/test/status_test.rb
++++ b/test/status_test.rb
+@@ -1,7 +1,4 @@
+-require 'test/unit'
+-
+-RAILS_ROOT = File.dirname(__FILE__)
+-require File.dirname(__FILE__) + "/../lib/open_id_authentication"
++require File.dirname(__FILE__) + '/test_helper'
+ 
+ class StatusTest < Test::Unit::TestCase
+   include OpenIdAuthentication
+diff --git a/test/test_helper.rb b/test/test_helper.rb
+new file mode 100644
+index 0000000..8e3fece
+--- /dev/null
++++ b/test/test_helper.rb
+@@ -0,0 +1,14 @@
++require 'test/unit'
++require 'rubygems'
++
++gem 'activesupport'
++require 'active_support'
++
++gem 'mocha'
++require 'mocha'
++
++gem 'ruby-openid'
++require 'openid'
++
++RAILS_ROOT = File.dirname(__FILE__) unless defined? RAILS_ROOT
++require File.dirname(__FILE__) + "/../lib/open_id_authentication"

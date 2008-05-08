@@ -29,6 +29,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # See how all your routes lay out with "rake routes"
 
+  map.openid "my/login_check", :controller => "my", :action => "login_check", :requirements => {:method => :get}
   # Install the default routes as the lowest priority.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
