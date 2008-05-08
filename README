@@ -8,3 +8,5 @@ It also crawl the blog post pages to get the comment count, ratings etc. which a
 First of all, you need openid account to login.
 Just log in, it will bring you to the blog listing page. You can add/edit your blog selection.
 Go to Posts page (not implemented yet) to view the update
+
+If many user starts using it, then it can have association analysis. Association mining will make this software suggest others the blog he/she might find interesting
