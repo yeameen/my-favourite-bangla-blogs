@@ -1,4 +1,4 @@
-class CreateUserPosts < ActiveRecord::Migration
+class CreateUsersPosts < ActiveRecord::Migration
   def self.up
     create_table :users_posts do |t|
       t.integer :user_id
