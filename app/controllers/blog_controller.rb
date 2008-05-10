@@ -17,6 +17,24 @@ class BlogController < ApplicationController
 #    @active_user = User.find(session[:user].user_id)
   end
 
+  def posts
+    user = active_user()
+    @user_posts = UsersPost.paginate(:all, :conditions => {:user_id => user.user_id}, :page => params[:page], :per_page => 10)
+  end
+
+  def view_post
+    return unless params[:id].to_i > 0
+    user = active_user()
+    user_post = UsersPost.find(:first, :conditions => {:post_id => params[:id], :user_id => user.user_id})
+    post = Post.find(params[:id])
+    unless user_post.nil?
+      user_post.is_read = 1
+      user_post.num_old_comments = post.num_comments
+      user_post.save
+    end
+    redirect_to post.url
+  end
+
   def edit
     begin
       @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})

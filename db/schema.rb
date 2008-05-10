@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 10) do
+ActiveRecord::Schema.define(:version => 11) do
 
   create_table "blogs", :force => true do |t|
     t.integer  "site_id"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(:version => 10) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "title"
+    t.integer  "num_reads"
   end
 
   create_table "sites", :force => true do |t|
@@ -58,6 +59,7 @@ ActiveRecord::Schema.define(:version => 10) do
     t.string   "xpath_rating"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "xpath_num_reads"
   end
 
   create_table "users", :force => true do |t|

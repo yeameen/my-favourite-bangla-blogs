@@ -51,14 +51,23 @@ class Blog < ActiveRecord::Base
     posts.each do |post|
       xpath_num_comment = post.blog.site.xpath_num_comment
       xpath_rating = post.blog.site.xpath_rating
+      xpath_num_reads = post.blog.site.xpath_num_reads
 
       # get number of comments
       puts "Fetching post #{post.id} - #{post.title}"
       doc = Hpricot.parse(open(post.url))
+
       bn_number = (doc/"#{xpath_num_comment}").to_s.split[0]
       en_number = translate_number_from_bangla(bn_number)
       puts "Number of comments: #{bn_number} - #{en_number}"
       post.num_comments = en_number
+
+      # get number of reads
+      bn_number = (doc/"#{xpath_num_reads}").to_s.split[0]
+      en_number = translate_number_from_bangla(bn_number)
+      en_number /= 10 # to fix a bug
+      puts "Number of reads: #{bn_number} - #{en_number}"
+      post.num_reads = en_number
 
       # get ratings
       # get positive rating
@@ -84,9 +93,12 @@ class Blog < ActiveRecord::Base
     en_number = 0
     length = p_bn_number.length
     for i in 1..length/3 do
-      en_number *= 10
       cur_digit = p_bn_number[3*i-1].to_i - 166
-      en_number += cur_digit
+#      next if cur_digit > 9 || cur_digit < 0
+      if cur_digit >= 0 && cur_digit <= 9
+        en_number *= 10
+        en_number += cur_digit
+      end
     end
     return en_number
   end
@@ -103,7 +115,7 @@ class Blog < ActiveRecord::Base
         :status => 0
       )
       unless user_post.save
-        puts ("Couldn't save post #{post.id} for user #{user.user_id}")
+        puts("Couldn't save post #{post.id} for user #{user.user_id}")
       end
     end
   end

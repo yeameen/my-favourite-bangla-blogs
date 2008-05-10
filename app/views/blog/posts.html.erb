@@ -1,0 +1,37 @@
+<% if @user_posts.nil? %>
+  <h1>You don't have any post yet</h1>
+<% else %>
+  <h2>Posts</h2>
+  <table>
+    <tr>
+      <th width="70px">Date</th>
+      <th>Post Title</th>
+      <th>Rating</th>
+      <th>Reads</th>
+      <th>Comments</th>
+      <th>Actions</th>
+    </tr>
+  <% @user_posts.each do |user_post|
+  %>
+    <tr id="post-<%=user_post.id%>">
+      <td style="text-align: right;"><%= time_ago_in_words(user_post.post.posted_at) unless user_post.post.posted_at.nil? %> ago</td>
+      <td>
+        <%= link_to user_post.post.title,
+                    view_post_url(:id => user_post.post.id),
+                    :target =>  "_blank" %>
+      </td>
+      <td>
+        <%= "#{user_post.post.rating_positive}/#{user_post.post.rating_negative}" %>
+      </td>
+      <td><%= user_post.post.num_reads %></td>
+      <td>
+        <%= user_post.post.num_comments %>
+        (<%= user_post.post.num_comments.to_i - user_post.num_old_comments.to_i %> new)
+      </td>
+    </tr>
+  <% end %>
+  </table>
+<% end %>
+<p>
+  <%= will_paginate @user_posts %>
+</p>
