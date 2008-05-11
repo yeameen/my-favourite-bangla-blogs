@@ -1,4 +1,6 @@
 class BlogController < ApplicationController
+  layout "template"
+  
   before_filter :authorize
   
   def index
@@ -54,6 +56,11 @@ class BlogController < ApplicationController
     end
   end
 
+  public
   def delete
+    @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
+    unless @user_blog.nil?
+      @user_blog.destroy
+    end
   end
 end

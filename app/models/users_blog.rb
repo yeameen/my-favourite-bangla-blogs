@@ -1,4 +1,6 @@
 class UsersBlog < ActiveRecord::Base
+  require 'rss/2.0'
+
   belongs_to :user
   belongs_to :blog
 
@@ -14,10 +16,22 @@ class UsersBlog < ActiveRecord::Base
     end
 
     blog = Blog.find(:first, :conditions => {:url => formatted_url, :site_id => site_id})
-    if blog.nil?
-      blog = Blog.create(:url => formatted_url, :site_id => site_id)
+    begin
+      if blog.nil?
+        # blog doesn't exists. so, add the blog entry
+        # fetch the rss feed to get the title
+        blog_feed_url = "#{formatted_url}/#{Site.find(site_id).feed_suffix}"
+        puts("\bBlog feed url - #{blog_feed_url}\n")
+        rss = RSS::Parser.parse(open(blog_feed_url), false)
+        blog_title = rss.channel.title
+
+        # create the blog entry
+        blog = Blog.create(:url => formatted_url, :site_id => site_id, :title => blog_title)
+      end
+      self.blog_id = blog.id
+    rescue
+      logger.debug("Error creating new blog entry - #{$!}")
     end
-    self.blog_id = blog.id
   end
 
   private

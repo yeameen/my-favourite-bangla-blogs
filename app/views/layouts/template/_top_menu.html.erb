@@ -1,0 +1,7 @@
+<% if active_user().nil? %>
+  <%= link_to_unless_current("Login", :controller => "my", :action => "login") %>
+<% else %>
+  <%= link_to_unless_current("Blogs", :controller => "blog", :action => "list") %>
+  <%= link_to_unless_current("Posts", :controller => "blog", :action => "posts") %>
+  <%= link_to_unless_current("Logout", :controller => "my", :action => "logout") %>
+<% end %>

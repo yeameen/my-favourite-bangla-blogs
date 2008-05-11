@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 11) do
+ActiveRecord::Schema.define(:version => 12) do
 
   create_table "blogs", :force => true do |t|
     t.integer  "site_id"
@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 11) do
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "title"
   end
 
   create_table "open_id_authentication_associations", :force => true do |t|

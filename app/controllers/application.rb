@@ -23,8 +23,5 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  protected
-  def active_user()
-    return session[:user]
-  end
+  include SecurityHelper
 end

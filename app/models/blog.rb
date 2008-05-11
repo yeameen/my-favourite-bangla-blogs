@@ -7,8 +7,12 @@ class Blog < ActiveRecord::Base
   belongs_to :site
   has_many :posts
 
+  def feed_url
+    return "#{url}/#{site.feed_suffix}"
+  end
+
   def self.fetch_posts
-    blogs = find(:all, :conditions => {:id => 9})
+    blogs = find(:all)
 
     blogs.each do |blog|
       feed_url = "#{blog.url}/#{blog.site.feed_suffix}"
@@ -41,48 +45,63 @@ class Blog < ActiveRecord::Base
     end
 
     # get all posts and update comment_count
-    # update_posts()
+     update_posts()
   end
 
   # update posts
   # now updates only comment count
   def self.update_posts()
-    posts = Post.find(:all, :conditions => {:blog_id => 9})
+    Hpricot.buffer_size = 1024144
+    puts "\n\nUpdating posts--\n"
+    posts = Post.find(:all, :conditions => ["posted_at > '#{-3.days.from_now.to_s(:db)}'"])
+#    posts = Post.find(:all, :conditions => ["id = 146 OR id = 147"])
     posts.each do |post|
-      xpath_num_comment = post.blog.site.xpath_num_comment
-      xpath_rating = post.blog.site.xpath_rating
-      xpath_num_reads = post.blog.site.xpath_num_reads
+      begin
+        xpath_num_comment = post.blog.site.xpath_num_comment
+        xpath_rating = post.blog.site.xpath_rating
+        xpath_num_reads = post.blog.site.xpath_num_reads
 
-      # get number of comments
-      puts "Fetching post #{post.id} - #{post.title}"
-      doc = Hpricot.parse(open(post.url))
+        # get number of comments
+        puts "Fetching post #{post.id} - #{post.title}"
+        doc = Hpricot.parse(open(post.url))
 
-      bn_number = (doc/"#{xpath_num_comment}").to_s.split[0]
-      en_number = translate_number_from_bangla(bn_number)
-      puts "Number of comments: #{bn_number} - #{en_number}"
-      post.num_comments = en_number
+        unless xpath_num_comment.nil? && xpath_num_comment != ''
+          bn_number = (doc/"#{xpath_num_comment}").to_s.split[0]
+          en_number = translate_number_from_bangla(bn_number)
+          puts "Number of comments: #{bn_number} - #{en_number}"
+          post.num_comments = en_number
+        end
 
-      # get number of reads
-      bn_number = (doc/"#{xpath_num_reads}").to_s.split[0]
-      en_number = translate_number_from_bangla(bn_number)
-      en_number /= 10 # to fix a bug
-      puts "Number of reads: #{bn_number} - #{en_number}"
-      post.num_reads = en_number
 
-      # get ratings
-      # get positive rating
-      bn_number_positive = (doc/"#{xpath_rating}").to_s.strip.split[1]
-      en_number_positive = translate_number_from_bangla(bn_number_positive)
-      post.rating_positive = en_number_positive
+        # get number of reads
+        unless xpath_num_reads.nil? && xpath_num_reads != ''
+          bn_number = (doc/"#{xpath_num_reads}").to_s.split[0]
+          en_number = translate_number_from_bangla(bn_number)
+          en_number /= 10 # to fix a bug
+          puts "Number of reads: #{bn_number} - #{en_number}"
+          post.num_reads = en_number
+        end
 
-      # get negative rating
-      bn_number_negative = (doc/"#{xpath_rating}").to_s.strip.split[5]
-      en_number_negative = translate_number_from_bangla(bn_number_negative)
-      post.rating_negative = en_number_negative
-      puts "Rating: #{bn_number_positive}/#{bn_number_negative} - #{en_number_positive}/#{en_number_negative}"
 
-      unless post.save
-        puts("Error updating post")
+        # get ratings
+        # get positive rating
+        unless xpath_rating.nil? && xpath_rating != ''
+          bn_number_positive = (doc/"#{xpath_rating}").to_s.strip.split[1]
+          en_number_positive = translate_number_from_bangla(bn_number_positive)
+          post.rating_positive = en_number_positive
+
+        # get negative rating
+          bn_number_negative = (doc/"#{xpath_rating}").to_s.strip.split[5]
+          en_number_negative = translate_number_from_bangla(bn_number_negative)
+          post.rating_negative = en_number_negative
+          puts "Rating: #{bn_number_positive}/#{bn_number_negative} - #{en_number_positive}/#{en_number_negative}"
+        end
+
+        unless post.save
+          raise("Error updating post")
+        end
+      rescue
+        puts("Error occured in fetching post - #{$!}")
       end
     end
     return nil
