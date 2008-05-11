@@ -26,7 +26,10 @@ class UsersBlog < ActiveRecord::Base
         blog_title = rss.channel.title
 
         # create the blog entry
-        blog = Blog.create(:url => formatted_url, :site_id => site_id, :title => blog_title)
+        blog = Blog.new(:url => formatted_url, :site_id => site_id, :title => blog_title)
+        unless blog.save
+          raise "Couldn't save blog"
+        end
       end
       self.blog_id = blog.id
     rescue

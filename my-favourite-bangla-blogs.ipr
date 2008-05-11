@@ -231,8 +231,8 @@
   <component name="RProjectSettings">
     <option name="myOptions">
       <list>
-        <option value="SVN_SHOW_CONFIRMATION" />
         <option value="SKIP" />
+        <option value="SVN_SHOW_CONFIRMATION" />
       </list>
     </option>
   </component>
