@@ -1,7 +1,7 @@
 class BlogController < ApplicationController
   layout "template"
   
-  before_filter :authorize
+  before_filter :authorize, :except => [:view_post]
   
   def index
     redirect_to :action => :list
