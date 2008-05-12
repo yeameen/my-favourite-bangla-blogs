@@ -4,7 +4,7 @@
   <h2>Posts</h2>
   <table>
     <tr>
-      <th width="70px">Date</th>
+      <th style="width: 130px; ">Date</th>
       <th>Post Title</th>
       <th>Rating</th>
       <th>Reads</th>
@@ -12,9 +12,10 @@
       <th>Actions</th>
     </tr>
   <% @user_posts.each do |user_post|
+     class_name = (user_post.is_read)? 'read' : 'unread'
   %>
-    <tr id="post-<%=user_post.id%>">
-      <td style="text-align: right;"><%= time_ago_in_words(user_post.post.posted_at) unless user_post.post.posted_at.nil? %> ago</td>
+    <tr id="post-<%=user_post.post_id%>" class="<%= class_name %>">
+      <td style="text-align: right; font-size:80%;"><%= time_ago_in_words(user_post.post.posted_at) unless user_post.post.posted_at.nil? %> ago</td>
       <td>
         <%= link_to user_post.post.title,
                     view_post_url(:id => user_post.post.id),
@@ -27,6 +28,10 @@
       <td>
         <%= user_post.post.num_comments %>
         (<%= user_post.post.num_comments.to_i - user_post.num_old_comments.to_i %> new)
+      </td>
+      <td>
+        <%= link_to_remote 'delete', :url => ({:action => 'delete_post', :id => user_post.post.id}),
+            :confirm => "You are going to delete\n#{user_post.post.title}\nAre you sure?" %>
       </td>
     </tr>
   <% end %>

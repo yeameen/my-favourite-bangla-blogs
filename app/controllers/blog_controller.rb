@@ -21,7 +21,10 @@ class BlogController < ApplicationController
 
   def posts
     user = active_user()
-    @user_posts = UsersPost.paginate(:all, :conditions => {:user_id => user.user_id}, :page => params[:page], :per_page => 10)
+    @user_posts = UsersPost.paginate( :all,
+                                      :include => [:post],
+                                      :order => "posts.posted_at DESC",
+                                      :conditions => {:user_id => user.user_id}, :page => params[:page], :per_page => 20)
   end
 
   def view_post
@@ -57,10 +60,18 @@ class BlogController < ApplicationController
   end
 
   public
-  def delete
+  def delete_blog
     @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
     unless @user_blog.nil?
       @user_blog.destroy
+    end
+  end
+
+  public
+  def delete_post
+    @user_post = UsersPost.find(:first, :conditions => {:user_id => active_user().user_id, :post_id => params[:id]})
+    unless @user_post.nil?
+      @user_post.destroy
     end
   end
 end

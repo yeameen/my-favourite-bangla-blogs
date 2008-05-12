@@ -1,0 +1,1 @@
+page.remove "blog-#{@user_blog.blog_id}"

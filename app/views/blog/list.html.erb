@@ -21,7 +21,7 @@
       <td><%= Blog.find(blog.id).posts.count %></td>
       <td>
         <%= link_to "edit", {:action => 'edit', :id => blog.id} %>
-        <%= link_to_remote 'delete', :url => ({:action => 'delete', :id => blog.id}),
+        <%= link_to_remote 'delete', :url => ({:action => 'delete_blog', :id => blog.id}),
             :confirm => "You are going to delete\n#{blog.url}\nAre you sure?" %>
       </td>
     </tr>

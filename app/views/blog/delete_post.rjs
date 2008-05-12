@@ -1,0 +1,1 @@
+page.remove "post-#{@user_post.post_id}"

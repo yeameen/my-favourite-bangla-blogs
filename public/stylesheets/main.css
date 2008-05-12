@@ -1,0 +1,17 @@
+table {
+  border: 0pt;
+  margin: 0pt;
+  width: 100%
+}
+td {
+  border-collapse: collapse;
+}
+.unread {
+  color: #000000;
+  background: #FFFFFF none repeat scroll 0%
+}
+
+.read {
+  color: #000000;
+  background: #E8EEF7 none repeat scroll 0%
+}
