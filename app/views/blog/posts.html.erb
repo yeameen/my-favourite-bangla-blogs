@@ -1,21 +1,23 @@
 <% if @user_posts.nil? %>
   <h1>You don't have any post yet</h1>
 <% else %>
-  <h2>Posts</h2>
   <table>
+    <caption>Posts</caption>
     <tr>
-      <th style="width: 130px; ">Date</th>
-      <th>Post Title</th>
-      <th>Rating</th>
-      <th>Reads</th>
-      <th>Comments</th>
-      <th>Actions</th>
+      <th scope="col">Date</th>
+      <th scope="col">Blog Name</th>
+      <th scope="col">Post Title</th>
+      <th scope="col">Rating</th>
+      <th scope="col">Reads</th>
+      <th scope="col">Comments</th>
+      <th scope="col">Actions</th>
     </tr>
   <% @user_posts.each do |user_post|
      class_name = (user_post.is_read)? 'read' : 'unread'
   %>
     <tr id="post-<%=user_post.post_id%>" class="<%= class_name %>">
       <td style="text-align: right; font-size:80%;"><%= time_ago_in_words(user_post.post.posted_at) unless user_post.post.posted_at.nil? %> ago</td>
+      <td><%= user_post.comment %></td>
       <td>
         <%= link_to user_post.post.title,
                     view_post_url(:id => user_post.post.id),

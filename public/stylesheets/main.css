@@ -1,11 +1,45 @@
 table {
   border: 0pt;
   margin: 0pt;
-  width: 100%
+  width:90%;
+  border-top:1px solid #e5eff8;
+  border-right:1px solid #e5eff8;
+  margin:1em auto;
+  border-collapse:collapse;
+  /*width: 100%*/
 }
+
+caption {
+  caption-side:top;
+  color:#9BA9B4;
+  font-size:0.94em;
+  letter-spacing:0.1em;
+  margin:1em 0pt 0pt;
+  padding:0pt;
+  text-align:center;
+}
+
+th {
+  background:#f4f9fe;
+  text-align:center;
+  font:bold 1em/2em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
+  color:#66a3d3;
+  border-bottom:1px solid #e5eff8;
+}
+
 td {
-  border-collapse: collapse;
+  white-space: nowrap;
+  color:#678197;
+  border-bottom:1px solid #e5eff8;
+  border-left:1px solid #e5eff8;
+  padding:.3em 1em;
+  /*text-align:center;*/
 }
+
+# tr.odd td {
+# background:#f7fbff
+# }
+
 .unread {
   color: #000000;
   background: #FFFFFF none repeat scroll 0%
