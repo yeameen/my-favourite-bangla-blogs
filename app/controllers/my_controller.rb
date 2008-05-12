@@ -13,7 +13,7 @@ class MyController < ApplicationController
 
   def login_check
     if !session[:user].nil?
-      redirect_to :controller => "blog", :action => "list" and return
+      redirect_to root_url and return
     end
     if using_open_id?
       authenticate

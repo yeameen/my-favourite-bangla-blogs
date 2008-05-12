@@ -30,12 +30,15 @@ class BlogController < ApplicationController
   def view_post
     return unless params[:id].to_i > 0
     user = active_user()
-    user_post = UsersPost.find(:first, :conditions => {:post_id => params[:id], :user_id => user.user_id})
     post = Post.find(params[:id])
-    unless user_post.nil?
-      user_post.is_read = 1
-      user_post.num_old_comments = post.num_comments
-      user_post.save
+
+    unless user.nil?
+      user_post = UsersPost.find(:first, :conditions => {:post_id => params[:id], :user_id => user.user_id})
+      unless user_post.nil?
+        user_post.is_read = 1
+        user_post.num_old_comments = post.num_comments
+        user_post.save
+      end
     end
     redirect_to post.url
   end
