@@ -8,17 +8,15 @@
       <th>Site</th>
       <th width="300px">Comment</th>
       <th width="400px">Blog url</th>
-      <th>Number of Posts</th>
       <th>Actions</th>
     </tr>
   <% @blogs.each do |blog|
   %>
     <tr id="blog-<%=blog.id%>">
       <td><%= blog.created_at.strftime("%b %d") unless blog.created_at.nil? %></td>
-      <td><%= blog.address_format %></td>
+      <td><%= blog.site_name %></td>
       <td><%= blog.comment unless blog.comment.nil? %></td>
       <td><%= blog.url %></td>
-      <td><%= Blog.find(blog.id).posts.count %></td>
       <td>
         <%= link_to "edit", {:action => 'edit', :id => blog.id} %>
         <%= link_to_remote 'delete', :url => ({:action => 'delete_blog', :id => blog.id}),

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 12) do
+ActiveRecord::Schema.define(:version => 13) do
 
   create_table "blogs", :force => true do |t|
     t.integer  "site_id"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 12) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "xpath_num_reads"
+    t.string   "name"
   end
 
   create_table "users", :force => true do |t|

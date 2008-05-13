@@ -8,15 +8,16 @@ class BlogController < ApplicationController
   end
   
   def list
-#    @blogs = Blog.paginate(:all, :page => params[:page])
-    @blogs = Blog.paginate_by_sql(["SELECT blogs.id, blogs.url, users_blogs.created_at, users_blogs.comment, sites.address_format
+    @blogs = Blog.paginate_by_sql(["SELECT
+                                       blogs.id, blogs.url, users_blogs.created_at, users_blogs.comment,
+                                       sites.address_format, sites.name as site_name
                                     FROM blogs
-                                    INNER JOIN users_blogs ON blogs.id = users_blogs.blog_id
-                                    INNER JOIN users ON users_blogs.user_id = users.id
-                                    INNER JOIN sites ON blogs.site_id = sites.id
-                                    WHERE users.id = ?", active_user.user_id], :page => params[:page])
-#    raise "user id - #{session[:user].user_id}"
-#    @active_user = User.find(session[:user].user_id)
+                                      INNER JOIN users_blogs ON blogs.id = users_blogs.blog_id
+                                      INNER JOIN users ON users_blogs.user_id = users.id
+                                      INNER JOIN sites ON blogs.site_id = sites.id
+                                    WHERE users.id = ?
+                                    ORDER BY users_blogs.created_at DESC",
+                                    active_user.user_id], :page => params[:page])
   end
 
   def posts
