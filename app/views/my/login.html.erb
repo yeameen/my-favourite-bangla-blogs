@@ -1,8 +1,8 @@
 <%= flash[:error] %>
 <% form_tag :action => "login_check" do %>
   <p>
-    <label for="openid_url">OpenID:</label>
-    <%= text_field_tag "openid_url", params[:openid_url] %>
+    <label for="openid_url"><img src="/images/openid-logo-small.png" width="100px"></label>
+    <%= text_field_tag "openid_url", params[:openid_url], :style => "position: absolute; left: 110px; top: 25px;"%>
   </p>
   <p>
     <%= submit_tag 'Sign in', :disable_with => "Signing in..." %>

@@ -55,7 +55,7 @@ class Blog < ActiveRecord::Base
   def self.update_posts()
     Hpricot.buffer_size = 1024144
     puts "\n\nUpdating posts--\n"
-    posts = Post.find(:all, :conditions => ["posted_at > '#{-7.days.from_now.to_s(:db)}'"])
+    posts = Post.find(:all, :conditions => ["posted_at > '#{-3.days.from_now.to_s(:db)}'"])
 #    posts = Post.find(:all, :conditions => ["id = 146 OR id = 147"])
     posts.each do |post|
       begin
