@@ -29,7 +29,7 @@
         </div>
       </td>
       <td>
-        <%= link_to_remote 'delete', :url => ({:action => 'delete_post', :id => usehihir_post.post.id}),
+        <%= link_to_remote 'delete', :url => ({:action => 'delete_post', :id => user_post.post.id}),
             :confirm => "You are going to delete\n#{user_post.post.title}\nAre you sure?" %>
       </td>
     </tr>

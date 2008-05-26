@@ -64,7 +64,7 @@ class Blog < ActiveRecord::Base
         xpath_num_reads = post.blog.site.xpath_num_reads
 
         # get number of comments
-        puts "Fetching post #{post.id} - #{post.title}"
+        logger.debug("Updating post #{post.id} - #{post.title}")
         doc = Hpricot.parse(open(post.url))
 
         unless xpath_num_comment.nil? && xpath_num_comment != ''
