@@ -21,7 +21,7 @@ class UsersBlog < ActiveRecord::Base
         # blog doesn't exists. so, add the blog entry
         # fetch the rss feed to get the title
         blog_feed_url = "#{formatted_url}/#{Site.find(site_id).feed_suffix}"
-        puts("\bBlog feed url - #{blog_feed_url}\n")
+        logger.debug("\bAdding new Blog - feed url - #{blog_feed_url}\n")
         rss = RSS::Parser.parse(open(blog_feed_url), false)
         blog_title = rss.channel.title
 

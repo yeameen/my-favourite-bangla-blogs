@@ -27,6 +27,8 @@ ActionController::Routing::Routes.draw do |map|
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   map.root :controller => "blog", :action => "posts"
 
+  map.tag "tag/:tag", :controller => "blog", :action => "tag"
+
   # See how all your routes lay out with "rake routes"
 
   map.view_post "post/:id", :controller => "blog", :action => "view_post"

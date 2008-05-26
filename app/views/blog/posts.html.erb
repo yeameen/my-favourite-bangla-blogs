@@ -7,9 +7,6 @@
       <th scope="col" style="width: 50px;">Date</th>
       <th scope="col">Blog Name</th>
       <th scope="col">Post Title</th>
-      <th scope="col">Rating</th>
-      <th scope="col">Reads</th>
-      <th scope="col">Comments</th>
       <th scope="col">Actions</th>
     </tr>
   <% @user_posts.each do |user_post|
@@ -19,20 +16,20 @@
       <td style="text-align: right; font-size:80%;"><%= time_ago_in_words(user_post.post.posted_at) unless user_post.post.posted_at.nil? %> ago</td>
       <td><%= user_post.comment %></td>
       <td>
-        <%= link_to user_post.post.title,
-                    view_post_url(:id => user_post.post.id),
-                    :target =>  "_blank" %>
+        <div style="padding:0px; margin:0px;">
+          <%= link_to user_post.post.title,
+                      view_post_url(:id => user_post.post.id),
+                      :target =>  "_blank" %>
+        </div>
+        <div style="padding:0px; margin:0px; float:right;">
+          <%= image_tag('views.png') %> <%= user_post.post.num_reads %>&nbsp;&nbsp;
+          <%= image_tag('comments.png') %> <%= user_post.post.num_comments %>(<%= user_post.post.num_comments.to_i - user_post.num_old_comments.to_i %> new)&nbsp;&nbsp;
+          <%= image_tag('thumb_up.png') %> <%= user_post.post.rating_positive %>&nbsp;&nbsp;
+          <%= image_tag('thumb_down.png') %> <%= user_post.post.rating_negative %>&nbsp;&nbsp;
+        </div>
       </td>
       <td>
-        <%= "#{user_post.post.rating_positive}/#{user_post.post.rating_negative}" %>
-      </td>
-      <td><%= user_post.post.num_reads %></td>
-      <td>
-        <%= user_post.post.num_comments %>
-        (<%= user_post.post.num_comments.to_i - user_post.num_old_comments.to_i %> new)
-      </td>
-      <td>
-        <%= link_to_remote 'delete', :url => ({:action => 'delete_post', :id => user_post.post.id}),
+        <%= link_to_remote 'delete', :url => ({:action => 'delete_post', :id => usehihir_post.post.id}),
             :confirm => "You are going to delete\n#{user_post.post.title}\nAre you sure?" %>
       </td>
     </tr>

@@ -4,23 +4,23 @@
 development:
    adapter: mysql
    database: favblog_development
-   username: savatar
-   password: sav123
+   username: rails
+   password: rails
    host: localhost
    socket: /var/run/mysqld/mysqld.sock
 
 test:
    adapter: mysql
    database: favblog_test
-   username: savatar
-   password: sav123
+   username: rails
+   password: rails
    host: localhost
    socket: /var/run/mysqld/mysqld.sock
 
 production:
    adapter: mysql
    database: favblog_production
-   username: savatar
-   password: sav123
+   username: rails
+   password: rails
    host: localhost
    socket: /var/run/mysqld/mysqld.sock
