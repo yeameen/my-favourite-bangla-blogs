@@ -2,6 +2,13 @@
   <h1>You haven't added any blog yet</h1>
 <% else %>
   <h1>Blogs</h1>
+  <% if !@recommended_blogs.nil? && @recommended_blogs.length > 0 %>
+    <div class="recommendations">
+      <% @recommended_blogs.each do |recommendation| %>
+        <%= recommendation.blog.url %><br />
+    <% end %>
+    </div>
+  <% end %>
   <table>
     <tr>
       <th width="70px"><%= link_to "Date added", :sort => {:by => "created_at", :dir => "DESC"} %></th>
