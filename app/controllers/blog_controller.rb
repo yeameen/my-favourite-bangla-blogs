@@ -18,6 +18,10 @@ class BlogController < ApplicationController
                                     WHERE users.id = ?
                                     ORDER BY users_blogs.created_at DESC",
                                     active_user.user_id], :page => params[:page])
+     @recommended_blogs = BlogRecommendation.find(:all,
+                                                :conditions => {:user_id => active_user.user_id},
+                                                :order => "created_at ASC",
+                                                :limit => 3)
 
 #    @blogs = Blog.paginate(:all,
 #      :select => "blogs.id, blogs.url, users_blogs.created_at, users_blogs.comment, sites.address_format, sites.name AS site_name",
@@ -68,7 +72,11 @@ class BlogController < ApplicationController
 
       unless @user_blog.save
         flash[:notice] = "Couldn't save blog"
+
+      else # update recommendation
+        BlogRecommendation.update_recommendations()
       end
+
       redirect_to :action => 'list'
     end
   end

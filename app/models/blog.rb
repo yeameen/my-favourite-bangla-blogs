@@ -7,6 +7,8 @@ class Blog < ActiveRecord::Base
   belongs_to :site
   has_many :posts
 
+  has_many :blog_recommendations
+
   def feed_url
     return "#{url}/#{site.feed_suffix}"
   end

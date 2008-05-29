@@ -9,4 +9,6 @@ class User < ActiveRecord::Base
 
   has_many :taggings
   has_many :tags, :through => :taggings, :select => "DISTINCT tags.*"
+
+  has_many :blog_recommendations
 end
