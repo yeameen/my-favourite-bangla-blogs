@@ -5,7 +5,7 @@
     <h3>Blogs, you may like</h3>
     <div class="recommendations">
       <% @recommended_blogs.each do |recommendation| %>
-        <div class="item" id="recommendation-<%= recommendation.id %>">
+        <div class="item" id="recommendation-<%= recommendation.blog_id %>">
           <% form_for :user_blog, :url => {:action => 'edit'} do |f| %>
             <table class="recommendation">
               <tr>
@@ -22,8 +22,8 @@
               <tr>
                 <td></td>
                 <td>
-                  <%= submit_to_remote 'recommendation', "Accept", :url => update_recommendation_url(:rec => 'Accept', :id => recommendation.id) %>
-                  <%= submit_to_remote 'recommendation', "Reject", :url => update_recommendation_url(:rec => 'Reject', :id => recommendation.id) %>
+                  <%= submit_to_remote 'recommendation', "Accept", :url => update_recommendation_url(:rec => 'Accept', :id => recommendation.blog.id) %>
+                  <%= submit_to_remote 'recommendation', "Reject", :url => update_recommendation_url(:rec => 'Reject', :id => recommendation.blog.id) %>
                 </td>
               </tr>
             </table>

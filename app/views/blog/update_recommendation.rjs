@@ -1,1 +1,1 @@
-page.remove "recommendation-#{@blog_recommendation.id}"
+page.remove "recommendation-#{@blog_id}"

@@ -122,7 +122,7 @@ class BlogController < ApplicationController
   def update_recommendation
     user_id = active_user().user_id
     blog_recommendation = BlogRecommendation.find(:first,
-                                                  :conditions => {:user_id => user_id, :id => params[:id]})
+                                                  :conditions => {:user_id => user_id, :blog_id => params[:id]})
     if blog_recommendation.nil?
       render :text => "illegal access" and return
     else
@@ -138,7 +138,7 @@ class BlogController < ApplicationController
       end
       blog_recommendation.save
     end
-    @blog_recommendation = blog_recommendation
+    @blog_id = blog_recommendation.blog_id
     BlogRecommendation.update_recommendations()
   end
 end

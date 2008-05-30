@@ -8,8 +8,8 @@ class BlogRecommendation < ActiveRecord::Base
   
   public
   def self.update_recommendations
-    # TODO: destroy all previous, accepted or new entries
-    destroy_all(:is_new => true, :is_rejected => false)
+    # TODO: destroy all previous new entries (except accepted or rejected)
+#    destroy_all(:is_new => true, :is_rejected => false)
     
     puts "Updating recommendation..."
     user_preferences = get_user_preferences()

@@ -1,4 +1,4 @@
-table {
+table.list {
   border: 0pt;
   margin: 0pt;
   width:90%;
@@ -9,7 +9,7 @@ table {
   /*width: 100%*/
 }
 
-caption {
+table.list caption {
   caption-side:top;
   color:#9BA9B4;
   font-size:0.94em;
@@ -19,7 +19,7 @@ caption {
   text-align:center;
 }
 
-th {
+table.list th {
   background:#f4f9fe;
   text-align:center;
   font:bold 1em/2em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
@@ -29,7 +29,7 @@ th {
   overflow: hidden;
 }
 
-td {
+table.list td {
   white-space: nowrap;
   color:#678197;
   border-bottom:1px solid #e5eff8;
@@ -39,12 +39,35 @@ td {
 }
 
 
-.unread {
+table.list .unread {
   color: #000000;
   background: #FFFFFF none repeat scroll 0%
 }
 
-.read {
+table.list .read {
   color: #000000;
   background: #E8EEF7 none repeat scroll 0%
+}
+
+.recommendations {
+
+}
+.recommendations .item {
+  border: 1px solid #ccc;
+  margin: 5px;
+  padding: 2px;
+
+}
+
+table.recommendation {
+  border: 0pt;
+  margin: 0pt;
+  width:90%;
+  margin-left: 20pt;
+
+}
+table.recommendation td {
+  white-space: nowrap;
+  padding:.1em 1em;
+
 }
