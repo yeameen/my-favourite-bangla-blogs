@@ -59,7 +59,6 @@ class BlogController < ApplicationController
   end
 
   def edit
-#    raise "error"
     begin
       @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
       raise "User Blog not found" if @user_blog.nil?
@@ -140,5 +139,6 @@ class BlogController < ApplicationController
       blog_recommendation.save
     end
     @blog_recommendation = blog_recommendation
+    BlogRecommendation.update_recommendations()
   end
 end
