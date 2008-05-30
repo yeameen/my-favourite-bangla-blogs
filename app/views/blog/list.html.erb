@@ -1,15 +1,39 @@
 <% if @blogs.nil? %>
-  <h1>You haven't added any blog yet</h1>
+  <h3>You haven't added any blog yet</h3>
 <% else %>
-  <h1>Blogs</h1>
   <% if !@recommended_blogs.nil? && @recommended_blogs.length > 0 %>
+    <h3>Blogs, you may like</h3>
     <div class="recommendations">
       <% @recommended_blogs.each do |recommendation| %>
-        <%= recommendation.blog.url %><br />
-    <% end %>
+        <div class="item" id="recommendation-<%= recommendation.id %>">
+          <% form_for :user_blog, :url => {:action => 'edit'} do |f| %>
+            <table class="recommendation">
+              <tr>
+                <td width="100">URL:</td>
+                <td>
+                  <%= link_to recommendation.blog.url, recommendation.blog.url, :target => "_blank" %>
+                  <%= f.hidden_field :url, {:value => recommendation.blog.url, :id => "recommendation-url-#{recommendation.id}"} %>
+                </td>
+              </tr>
+              <tr>
+                <td>Comment:</td>
+                <td><%= f.text_field :comment, {:id => "recommendation-comment-#{recommendation.id}", :style => "width: 50%"} %></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <%= submit_to_remote 'recommendation', "Accept", :url => update_recommendation_url(:rec => 'Accept', :id => recommendation.id) %>
+                  <%= submit_to_remote 'recommendation', "Reject", :url => update_recommendation_url(:rec => 'Reject', :id => recommendation.id) %>
+                </td>
+              </tr>
+            </table>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   <% end %>
-  <table>
+  <h3>Blogs, you are following</h3>
+  <table class="list">
     <tr>
       <th width="70px"><%= link_to "Date added", :sort => {:by => "created_at", :dir => "DESC"} %></th>
       <th>Site</th>

@@ -33,6 +33,10 @@ ActionController::Routing::Routes.draw do |map|
 
   map.view_post "post/:id", :controller => "blog", :action => "view_post"
   map.openid "my/login_check", :controller => "my", :action => "login_check", :requirements => {:method => :get}
+
+  # update recommendation
+  map.update_recommendation 'recommendation/update/:rec/:id', :controller => 'blog', :action => 'update_recommendation'
+  
   # Install the default routes as the lowest priority.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'

@@ -3,26 +3,47 @@ require File.join(File.dirname(__FILE__), '../../lib/recommendation/recommendati
 class BlogRecommendation < ActiveRecord::Base
   belongs_to :user
   belongs_to :blog
+
+  SIZE_RECOMMENDATIONS = 3
   
   public
   def self.update_recommendations
-    puts "Updating recommendation"
+    # TODO: destroy all previous, accepted or new entries
+    destroy_all(:is_new => true, :is_rejected => false)
+    
+    puts "Updating recommendation..."
     user_preferences = get_user_preferences()
     user_preferences.each do |user_id, preferences|
       puts("Computing recommendation for user - #{user_id}")
 #      puts("NUmber of recommended items for user - #{user_id}: #{Recommendation::get_recommendations(user_preferences, user_id).inspect}")
 
-      recommended_blogs = Recommendation::get_recommendations(user_preferences, user_id).inject([]) do |temp, cur|
-        temp + [cur[1]]
+      recommended_blogs = Recommendation::get_recommendations(user_preferences, user_id)[0..SIZE_RECOMMENDATIONS].inject({}) do |temp_hash, cur|
+#        temp + [cur[1]]
+        temp_hash[cur[1]] = cur[0]
+        temp_hash
       end
-      puts "Recommended blogs - #{recommended_blogs.inspect}"
+      puts recommended_blogs.inspect
 
-      recommended_blogs.each do |blog_id|
+      # insert updated ones
+      recommended_blogs.each do |blog_id, weight|
         unless find(:first, :conditions => {:user_id => user_id, :blog_id => blog_id})
-          create(:user_id => user_id, :blog_id => blog_id, :is_new => true, :is_rejected => false)
+          create(:user_id => user_id, :blog_id => blog_id, :weight => weight, :is_new => true, :is_rejected => false)
         end
       end
     end
+  end
+
+  public
+  def accept(p_comment = nil)
+    UsersBlog.create(:user_id => user_id, :blog_id => blog_id, :comment => p_comment)
+    self.is_new = false
+    self.is_rejected = false
+  end
+
+  public
+  def reject
+    self.is_new = 0
+    self.is_rejected = 1
   end
 
   private

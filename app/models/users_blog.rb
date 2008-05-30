@@ -4,6 +4,8 @@ class UsersBlog < ActiveRecord::Base
   belongs_to :user
   belongs_to :blog
 
+  before_save :check_duplicate
+
   def url
     return Blog.find(self.blog_id).url unless blog_id.nil?
     return nil
@@ -34,6 +36,13 @@ class UsersBlog < ActiveRecord::Base
       self.blog_id = blog.id
     rescue
       logger.debug("Error creating new blog entry - #{$!}")
+    end
+  end
+
+  private
+  def check_duplicate
+    if UsersBlog.find(:first, :conditions => {:user_id => self.user_id, :blog_id => self.blog_id})
+      return false
     end
   end
 

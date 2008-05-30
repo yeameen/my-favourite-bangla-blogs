@@ -19,9 +19,9 @@ class BlogController < ApplicationController
                                     ORDER BY users_blogs.created_at DESC",
                                     active_user.user_id], :page => params[:page])
      @recommended_blogs = BlogRecommendation.find(:all,
-                                                :conditions => {:user_id => active_user.user_id},
-                                                :order => "created_at ASC",
-                                                :limit => 3)
+                                                :conditions => {:user_id => active_user.user_id, :is_new => true},
+                                                :order => "weight ASC",
+                                                :limit => BlogRecommendation::SIZE_RECOMMENDATIONS)
 
 #    @blogs = Blog.paginate(:all,
 #      :select => "blogs.id, blogs.url, users_blogs.created_at, users_blogs.comment, sites.address_format, sites.name AS site_name",
@@ -59,6 +59,7 @@ class BlogController < ApplicationController
   end
 
   def edit
+    raise "error"
     begin
       @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
       raise "User Blog not found" if @user_blog.nil?
@@ -74,6 +75,14 @@ class BlogController < ApplicationController
         flash[:notice] = "Couldn't save blog"
 
       else # update recommendation
+        blog_recommendation = BlogRecommendation.find(:first,
+                                                      :conditions => {:blog_id => @user_blog.blog.id,
+                                                                      :user_id => active_user().user_id})
+        unless blog_recommendation.nil?
+          blog_recommendation.is_new = false
+          blog_recommendation.reject = false
+          blog_recommendation.save
+        end
         BlogRecommendation.update_recommendations()
       end
 
@@ -95,5 +104,42 @@ class BlogController < ApplicationController
     unless @user_post.nil?
       @user_post.destroy
     end
+  end
+
+
+#  public
+#  def reject_recommendation
+#    user_id = active_user().user_id
+#    blog_recommendation = BlogRecommendation.find(:first,
+#                                                  :conditions => {:user_id => user_id, :id => params[:id]})
+#    if blog_recommendation.nil?
+#      render :text => "illegal access" and return
+#    else
+#      logger.debug("\nRejecting recommendation")
+#      log_recommendation.rejecct()
+#    end
+#  end
+
+  public
+  def update_recommendation
+    user_id = active_user().user_id
+    blog_recommendation = BlogRecommendation.find(:first,
+                                                  :conditions => {:user_id => user_id, :id => params[:id]})
+    if blog_recommendation.nil?
+      render :text => "illegal access" and return
+    else
+      logger.debug("\n\nParameter - #{params[:rec]}\n\n")
+      if params[:rec] == "Accept"
+        logger.debug("\n\nAccepting...")
+        blog_recommendation.accept(params[:user_blog][:comment])
+      else
+        logger.debug("\n\nRejecting...")
+#        blog_recommendation.is_new = false
+#        blog_recommendation.is_rejected = true
+        blog_recommendation.reject()
+      end
+      blog_recommendation.save
+    end
+    @blog_recommendation = blog_recommendation
   end
 end

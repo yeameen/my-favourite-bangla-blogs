@@ -76,7 +76,8 @@ class Recommendation
 
     rankings = []
     totals.each do |item, total|
-      rankings << [total/similaritySums[item], item]
+      weight = total/similaritySums[item]
+      rankings << [weight, item] if weight > 0.0
     end
     return rankings.sort.reverse
   end

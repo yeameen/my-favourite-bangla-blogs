@@ -36,7 +36,7 @@ class Blog < ActiveRecord::Base
               puts ("Adding new post - #{post.inspect}")
               post.save
 
-              #TODO: add post to users_posts table, if the post is posted withing last 24 hours
+              # add post to users_posts table, if the post is posted withing last 24 hours
               if post.posted_at > -1.days.from_now
                 update_users_posts(post)
               end

@@ -11,6 +11,24 @@ class MyController < ApplicationController
 
   end
 
+  def mock_login
+    begin
+      user = User.find(params[:id])
+    rescue
+      render :text => "Wrong id" and return
+    end
+    openid_user = OpenStruct.new
+    openid_user.identity_url = user.identity_url
+    openid_user.email = user.email
+    openid_user.user_id = user.id
+
+    session[:user] = openid_user
+
+    jumpto = session[:jumpto] || { :controller => "blog", :action => "list" }
+    session[:jumpto] = nil
+    redirect_to(jumpto) and return
+  end
+
   def login_check
     if !session[:user].nil?
       redirect_to root_url and return
