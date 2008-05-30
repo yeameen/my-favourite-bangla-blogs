@@ -59,7 +59,7 @@ class BlogController < ApplicationController
   end
 
   def edit
-    raise "error"
+#    raise "error"
     begin
       @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
       raise "User Blog not found" if @user_blog.nil?
@@ -79,8 +79,7 @@ class BlogController < ApplicationController
                                                       :conditions => {:blog_id => @user_blog.blog.id,
                                                                       :user_id => active_user().user_id})
         unless blog_recommendation.nil?
-          blog_recommendation.is_new = false
-          blog_recommendation.reject = false
+          blog_recommendation.accept()
           blog_recommendation.save
         end
         BlogRecommendation.update_recommendations()
