@@ -32,7 +32,7 @@ table.list th {
 table.list td {
   white-space: nowrap;
   color:#678197;
-  border-bottom:1px solid #e5eff8;
+  border-bottom:1px solid #d5dfe8;
   border-left:1px solid #e5eff8;
   padding:.3em 1em;
   /*text-align:center;*/
