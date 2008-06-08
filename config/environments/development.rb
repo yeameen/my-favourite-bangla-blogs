@@ -16,3 +16,7 @@ config.action_view.cache_template_extensions         = false
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
+
+#AssetsBundle.options[:compress] = [:css, :js]
+#AssetsBundle.options[:css_keep_comments] = false
+#AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)

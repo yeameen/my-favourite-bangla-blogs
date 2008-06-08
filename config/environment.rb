@@ -57,3 +57,5 @@ Rails::Initializer.run do |config|
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
 end
+
+AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)

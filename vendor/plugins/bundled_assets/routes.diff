@@ -1,0 +1,13 @@
+--- config/routes.old.rb
++++ config/routes.rb	
+@@ -1,3 +1,10 @@
+ ActionController::Routing::Routes.draw do |map|
++	map.connect ':asset_dir/:names.:ext', 
++	            :controller => 'assets_bundle', 
++	            :action => 'fetch', 
++	            :asset_dir => /(stylesheets|javascripts)/,
++	            :ext => /css|js/, 
++	            :names => /[^.]*/
++	
+   Mephisto::Routing.connect_with map
+ end

@@ -36,6 +36,14 @@ ActionController::Routing::Routes.draw do |map|
 
   # update recommendation
   map.update_recommendation 'recommendation/update/:rec/:id', :controller => 'blog', :action => 'update_recommendation'
+
+  # cached and bundled javascript/stylesheet
+  map.connect ':asset_dir/:names.:ext',
+            :controller => 'assets_bundle',
+            :action => 'fetch',
+            :asset_dir => /(stylesheets|javascripts)/,
+            :ext => /(css|js)/,
+            :names => /[^.]*/
   
   # Install the default routes as the lowest priority.
   map.connect ':controller/:action/:id'
