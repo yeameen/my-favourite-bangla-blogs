@@ -58,4 +58,4 @@ Rails::Initializer.run do |config|
   # config.active_record.default_timezone = :utc
 end
 
-AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)
+# AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)

@@ -8,7 +8,6 @@ class AssetsBundle
                    :paths => { :css   => '/public/stylesheets/',
                                :js    => '/public/javascripts/' }, 
                    :jsmin => "ruby #{File.dirname(__FILE__)}/jsmin.rb"
-#                    :jsmin => "#{File.dirname(__FILE__)}/jsmin2"
                   }
   
   def initialize(names, ext, options = {})
