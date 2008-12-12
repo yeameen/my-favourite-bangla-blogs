@@ -16,7 +16,7 @@
                 </td>
               </tr>
               <tr>
-                <td>Comment:</td>
+                <td>Name:</td>
                 <td><%= f.text_field :comment, {:id => "recommendation-comment-#{recommendation.id}", :style => "width: 50%"} %></td>
               </tr>
               <tr>
@@ -49,7 +49,7 @@
       <td><%= blog.comment unless blog.comment.nil? %></td>
       <td><%= blog.url %></td>
       <td>
-        <%= link_to "edit", {:action => 'edit', :id => blog.id} %>
+        <%# link_to "edit", {:action => 'edit', :id => blog.id} %>
         <%= link_to_remote 'delete', :url => ({:action => 'delete_blog', :id => blog.id}),
             :confirm => "You are going to delete\n#{blog.url}\nAre you sure?" %>
       </td>

@@ -1,20 +1,20 @@
 <h3>Edit Blog url</h3>
-Comment: <%= @user_blog.comment %>
+<br />
 <% form_for :user_blog, :method => :post do |f| %>
 <table>
-  <tr>
-    <td>URL:</td>
-    <td>
-      <%= f.text_field :url %>
-      <%= error_message_on :user_blog, :url %>
-    </td>
-  </tr>
   <tr>
    <td>Name:</td>
       <td>
        <%= f.text_field :comment %>
        <%= error_message_on :user_blog, :comment %>
       </td>
+  </tr>
+  <tr>
+    <td>URL:</td>
+    <td>
+      <%= f.text_field :url %>
+      <%= error_message_on :user_blog, :url %>
+    </td>
   </tr>
   <tr>
     <td></td>

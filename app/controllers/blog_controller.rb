@@ -81,6 +81,7 @@ class BlogController < ApplicationController
           blog_recommendation.accept()
           blog_recommendation.save
         end
+        puts "updating blog recommendations\n\n\n"
         BlogRecommendation.update_recommendations()
       end
 

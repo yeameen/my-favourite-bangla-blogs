@@ -3,7 +3,8 @@ class Recommendation
   def self.similarity_pearson(p_preferences, p_person1, p_person2)
     similarities = []
     p_preferences[p_person1].each_key do |item|
-      if p_preferences[p_person2].include?(item)
+      if p_preferences[p_person2].include?(item) #&& p_preferences[p_person1][item] != 0.0 && p_preferences[p_person2][item] != 0.0
+#        puts "adding item - #{item}, #{p_preferences[p_person1][item]}, #{p_preferences[p_person2][item]}"
         similarities.push(item)
       end
     end
@@ -58,13 +59,15 @@ class Recommendation
     p_preferences.each do |other, preferences|
       # don't compare to myself
       if other != p_person
-        similarity = similarity_pearson(p_preferences, p_person, other)
 
+        similarity = similarity_pearson(p_preferences, p_person, other)
+#        puts "person - #{p_person.inspect}, other - #{other.inspect}, similarity - #{similarity}"
+        
         # if positive similarity
         if similarity > 0
           # find the items not in p_person's list
           for item, value in p_preferences[other]
-            if !p_preferences[p_person].has_key?(item) or (p_preferences[p_person].has_key?(item) && p_preferences[p_person][item] == 0.0)
+            if !p_preferences[p_person].has_key?(item) || (p_preferences[p_person].has_key?(item) && p_preferences[p_person][item] == 0.0)
 #              puts "for person - #{p_person}, calculating recommendation for - #{item}"
               totals[item] += p_preferences[other][item] * similarity
               similaritySums[item] += similarity

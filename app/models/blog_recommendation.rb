@@ -53,7 +53,9 @@ class BlogRecommendation < ActiveRecord::Base
     users = User.find(:all)
     for user in users
       # consider users who has at least 3 bookmarks
-#      next user.blogs.count < 3
+
+#      next user.blogs.length < 3
+      puts "for user - #{user.identity_url}"
 
       # 1.count positive recommendations
       positive_user_ratings = user.blogs.inject({}){|temp, cur| temp.merge({cur.id => 1.0})}
