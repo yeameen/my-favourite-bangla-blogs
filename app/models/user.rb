@@ -11,4 +11,8 @@ class User < ActiveRecord::Base
   has_many :tags, :through => :taggings, :select => "DISTINCT tags.*"
 
   has_many :blog_recommendations
+
+  def user_id
+    return id()
+  end
 end

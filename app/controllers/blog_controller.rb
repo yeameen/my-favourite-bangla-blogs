@@ -17,9 +17,9 @@ class BlogController < ApplicationController
                                       INNER JOIN sites ON blogs.site_id = sites.id
                                     WHERE users.id = ?
                                     ORDER BY users_blogs.created_at DESC",
-                                    active_user.user_id], :page => params[:page])
+                                    active_user.id], :page => params[:page])
      @recommended_blogs = BlogRecommendation.find(:all,
-                                                :conditions => {:user_id => active_user.user_id, :is_new => true},
+                                                :conditions => {:user_id => active_user.id, :is_new => true},
                                                 :order => "weight ASC",
                                                 :limit => BlogRecommendation::SIZE_RECOMMENDATIONS)
 
@@ -39,7 +39,7 @@ class BlogController < ApplicationController
     @user_posts = UsersPost.paginate( :all,
                                       :include => [:post],
                                       :order => "posts.posted_at DESC",
-                                      :conditions => {:user_id => user.user_id}, :page => params[:page], :per_page => 20)
+                                      :conditions => {:user_id => user.id}, :page => params[:page], :per_page => 20)
   end
 
   def view_post
@@ -48,7 +48,7 @@ class BlogController < ApplicationController
     post = Post.find(params[:id])
 
     unless user.nil?
-      user_post = UsersPost.find(:first, :conditions => {:post_id => params[:id], :user_id => user.user_id})
+      user_post = UsersPost.find(:first, :conditions => {:post_id => params[:id], :user_id => user.id})
       unless user_post.nil?
         user_post.is_read = 1
         user_post.num_old_comments = post.num_comments
@@ -60,11 +60,11 @@ class BlogController < ApplicationController
 
   def edit
     begin
-      @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
+      @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().id, :blog_id => params[:id]})
       raise "User Blog not found" if @user_blog.nil?
     rescue
       logger.debug("Exception occured - #{$!}")
-      @user_blog = UsersBlog.new(:user_id => active_user().user_id)
+      @user_blog = UsersBlog.new(:user_id => active_user().id)
     end
 
     if request.post?
@@ -76,7 +76,7 @@ class BlogController < ApplicationController
       else # update recommendation
         blog_recommendation = BlogRecommendation.find(:first,
                                                       :conditions => {:blog_id => @user_blog.blog.id,
-                                                                      :user_id => active_user().user_id})
+                                                                      :user_id => active_user().id})
         unless blog_recommendation.nil?
           blog_recommendation.accept()
           blog_recommendation.save
@@ -90,7 +90,7 @@ class BlogController < ApplicationController
 
   public
   def delete_blog
-    @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().user_id, :blog_id => params[:id]})
+    @user_blog = UsersBlog.find(:first, :conditions => {:user_id => active_user().id, :blog_id => params[:id]})
     unless @user_blog.nil?
       @user_blog.destroy
     end
@@ -98,7 +98,7 @@ class BlogController < ApplicationController
 
   public
   def delete_post
-    @user_post = UsersPost.find(:first, :conditions => {:user_id => active_user().user_id, :post_id => params[:id]})
+    @user_post = UsersPost.find(:first, :conditions => {:user_id => active_user().id, :post_id => params[:id]})
     unless @user_post.nil?
       @user_post.destroy
     end
@@ -107,7 +107,7 @@ class BlogController < ApplicationController
 
 #  public
 #  def reject_recommendation
-#    user_id = active_user().user_id
+#    user_id = active_user().id
 #    blog_recommendation = BlogRecommendation.find(:first,
 #                                                  :conditions => {:user_id => user_id, :id => params[:id]})
 #    if blog_recommendation.nil?

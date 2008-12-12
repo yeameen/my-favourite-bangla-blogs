@@ -9,7 +9,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 13) do
+ActiveRecord::Schema.define(:version => 17) do
+
+  create_table "blog_recommendations", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "blog_id"
+    t.boolean  "is_new"
+    t.boolean  "is_rejected"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "weight"
+  end
 
   create_table "blogs", :force => true do |t|
     t.integer  "site_id"
@@ -30,9 +40,9 @@ ActiveRecord::Schema.define(:version => 13) do
   end
 
   create_table "open_id_authentication_nonces", :force => true do |t|
-    t.integer "timestamp",                  :null => false
+    t.integer "timestamp",  :null => false
     t.string  "server_url"
-    t.string  "salt",       :default => "", :null => false
+    t.string  "salt",       :null => false
   end
 
   create_table "posts", :force => true do |t|
@@ -44,13 +54,23 @@ ActiveRecord::Schema.define(:version => 13) do
     t.integer  "rating_average"
     t.integer  "rating_total"
     t.text     "content"
-    t.string   "url"
     t.datetime "posted_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "url"
     t.string   "title"
     t.integer  "num_reads"
   end
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "sites", :force => true do |t|
     t.string   "address_format"
@@ -64,6 +84,26 @@ ActiveRecord::Schema.define(:version => 13) do
     t.string   "name"
   end
 
+  create_table "taggings", :force => true do |t|
+    t.integer "tag_id"
+    t.integer "taggable_id"
+    t.string  "taggable_type"
+    t.integer "user_id"
+  end
+
+  add_index "taggings", ["tag_id", "taggable_type"], :name => "index_taggings_on_tag_id_and_taggable_type"
+  add_index "taggings", ["user_id", "tag_id", "taggable_type"], :name => "index_taggings_on_user_id_and_tag_id_and_taggable_type"
+  add_index "taggings", ["taggable_id", "taggable_type"], :name => "index_taggings_on_taggable_id_and_taggable_type"
+  add_index "taggings", ["user_id", "taggable_id", "taggable_type"], :name => "index_taggings_on_user_id_and_taggable_id_and_taggable_type"
+
+  create_table "tags", :force => true do |t|
+    t.string  "name"
+    t.integer "taggings_count", :default => 0, :null => false
+  end
+
+  add_index "tags", ["name"], :name => "index_tags_on_name"
+  add_index "tags", ["taggings_count"], :name => "index_tags_on_taggings_count"
+
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "email"
@@ -74,10 +114,10 @@ ActiveRecord::Schema.define(:version => 13) do
   end
 
   create_table "users_blogs", :force => true do |t|
-    t.integer  "user_id",                      :null => false
-    t.integer  "blog_id",                      :null => false
-    t.integer  "num_posts",     :default => 0
-    t.integer  "num_new_posts", :default => 0
+    t.integer  "user_id",       :null => false
+    t.integer  "blog_id",       :null => false
+    t.integer  "num_posts"
+    t.integer  "num_new_posts"
     t.string   "description"
     t.string   "comment"
     t.datetime "created_at"

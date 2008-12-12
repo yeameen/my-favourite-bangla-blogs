@@ -49,7 +49,7 @@ class Blog < ActiveRecord::Base
     end
 
     # get all posts and update comment_count
-     update_posts()
+#     update_posts()
   end
 
   # update posts
@@ -81,7 +81,7 @@ class Blog < ActiveRecord::Base
         unless xpath_num_reads.nil? && xpath_num_reads != ''
           bn_number = (doc/"#{xpath_num_reads}").to_s.split[0]
           en_number = translate_number_from_bangla(bn_number)
-          en_number /= 10 # to fix a bug
+#          en_number /= 10 # to fix a bug
           puts "Number of reads: #{bn_number} - #{en_number}"
           post.num_reads = en_number
         end

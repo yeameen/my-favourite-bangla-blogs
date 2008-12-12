@@ -3,7 +3,7 @@
 
 development:
    adapter: mysql
-   database: favblog_development
+   database: favblog2_development
    username: rails
    password: rails
    host: localhost
@@ -11,7 +11,7 @@ development:
 
 test:
    adapter: mysql
-   database: favblog_test
+   database: favblog2_test
    username: rails
    password: rails
    host: localhost
@@ -19,7 +19,7 @@ test:
 
 production:
    adapter: mysql
-   database: favblog_production
+   database: favblog2_production
    username: rails
    password: rails
    host: localhost

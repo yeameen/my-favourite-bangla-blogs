@@ -17,20 +17,15 @@ class MyController < ApplicationController
     rescue
       render :text => "Wrong id" and return
     end
-    openid_user = OpenStruct.new
-    openid_user.identity_url = user.identity_url
-    openid_user.email = user.email
-    openid_user.user_id = user.id
+    init_session(user)
 
-    session[:user] = openid_user
-
-    jumpto = session[:jumpto] || { :controller => "blog", :action => "list" }
+    jumpto =  { :controller => "blog", :action => "list" }
     session[:jumpto] = nil
     redirect_to(jumpto) and return
   end
 
   def login_check
-    if !session[:user].nil?
+    if !session[:user_id].nil?
       redirect_to root_url and return
     end
     if using_open_id?
@@ -42,7 +37,7 @@ class MyController < ApplicationController
   end
 
   def logout
-    session[:user] = nil
+    session[:user_id] = nil
     redirect_to :action => "index"
   end
 
@@ -53,17 +48,23 @@ class MyController < ApplicationController
     |result, identity_url, registration|
 
       if result.successful?
-        openid_user = OpenStruct.new
-        openid_user.identity_url = identity_url
-        openid_user.nickname = registration["nickname"]
-        openid_user.email = registration["email"]
+#        openid_user = OpenStruct.new
+#        openid_user.identity_url = identity_url
+#        openid_user.nickname = registration["nickname"]
+#        openid_user.email = registration["email"]
 
+        openid_user = {
+          :identity_url => identity_url,
+          :nickname => registration["nickname"],
+          :email => registration["email"]
+        }
 
         # check if user is already in the database. if not, create one
-        db_user = create_user_if_not_exists(openid_user)
-        openid_user.user_id = db_user.id
+        db_user = User.find_or_create_by_identity_url(openid_user)
+#        db_user = create_user_if_not_exists(openid_user)
+#        openid_user.user_id = db_user.id
 
-        session[:user] = openid_user
+        init_session(db_user)
 
         jumpto = session[:jumpto] || { :controller => "blog", :action => "list" }
         session[:jumpto] = nil

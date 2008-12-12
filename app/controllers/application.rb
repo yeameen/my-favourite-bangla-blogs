@@ -12,9 +12,11 @@ class ApplicationController < ActionController::Base
     config.ignore_columns.add [:created_at, :updated_at]
   end
 
+  include SecurityHelper
+
   protected
   def authorize
-    unless session[:user]
+    unless logged_in?
       flash[:notice] = "Please log in"
       # save the URL the user requested so we can hop back to it
       # after login
@@ -22,6 +24,4 @@ class ApplicationController < ActionController::Base
       redirect_to(:controller => "my", :action => "login")
     end
   end
-
-  include SecurityHelper
 end
