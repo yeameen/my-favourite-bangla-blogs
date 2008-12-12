@@ -41,12 +41,12 @@ table.list td {
 
 table.list .unread {
   color: #000000;
-  background: #FFFFFF none repeat scroll 0%
+  background: #E8EEF7 none repeat scroll 0%
 }
 
 table.list .read {
   color: #000000;
-  background: #E8EEF7 none repeat scroll 0%
+  background: #FFFFFF none repeat scroll 0%
 }
 
 .recommendations {
