@@ -8,30 +8,13 @@ class BlogController < ApplicationController
   end
   
   def list
-    @blogs = Blog.paginate_by_sql(["SELECT
-                                       blogs.id, blogs.url, users_blogs.created_at, users_blogs.comment,
-                                       sites.address_format, sites.name as site_name
-                                    FROM blogs
-                                      INNER JOIN users_blogs ON blogs.id = users_blogs.blog_id
-                                      INNER JOIN users ON users_blogs.user_id = users.id
-                                      INNER JOIN sites ON blogs.site_id = sites.id
-                                    WHERE users.id = ?
-                                    ORDER BY users_blogs.created_at DESC",
-                                    active_user.id], :page => params[:page])
-     @recommended_blogs = BlogRecommendation.find(:all,
+    user = active_user()
+    @blogs = user.blogs.paginate(:all, :page => params[:page])
+
+    @recommended_blogs = BlogRecommendation.find(:all,
                                                 :conditions => {:user_id => active_user.id, :is_new => true},
                                                 :order => "weight ASC",
                                                 :limit => BlogRecommendation::SIZE_RECOMMENDATIONS)
-
-#    @blogs = Blog.paginate(:all,
-#      :select => "blogs.id, blogs.url, users_blogs.created_at, users_blogs.comment, sites.address_format, sites.name AS site_name",
-#      :joins => "INNER JOIN users_blogs ON blogs.id = users_blogs.blog_id
-#                 INNER JOIN users ON users_blogs.user_id = users.id
-#                 INNER JOIN sites ON blogs.site_id = sites.id",
-#      :conditions => ["users.id = ?", active_user.user_id],
-##      :orderby => "users_blogs.created by DES",
-#      :page => params[:page]
-#    )
   end
 
   def posts

@@ -45,7 +45,7 @@
   %>
     <tr id="blog-<%=blog.id%>">
       <td><%= blog.created_at.strftime("%b %d") unless blog.created_at.nil? %></td>
-      <td><%= blog.site_name %></td>
+      <td><%= blog.site.name %></td>
       <td><%= blog.comment unless blog.comment.nil? %></td>
       <td><%= blog.url %></td>
       <td>
