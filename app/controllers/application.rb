@@ -8,10 +8,6 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery :secret => '3de2b0f5d106e42235acd13b1a3e53b7'
 
-  ActiveScaffold.set_defaults do |config|
-    config.ignore_columns.add [:created_at, :updated_at]
-  end
-
   include SecurityHelper
 
   protected
