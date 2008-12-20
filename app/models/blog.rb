@@ -1,6 +1,8 @@
 class Blog < ActiveRecord::Base
   require 'rss/2.0'
   require 'hpricot'
+  require 'open-uri'
+  require 'nokogiri'
   
   has_many :users_blogs
   has_many :users, :through => :user_blogs
@@ -47,9 +49,6 @@ class Blog < ActiveRecord::Base
         end
       end
     end
-
-    # get all posts and update comment_count
-#     update_posts()
   end
 
   # update posts
@@ -58,44 +57,47 @@ class Blog < ActiveRecord::Base
     Hpricot.buffer_size = 1024144
     puts "\n\nUpdating posts--\n"
     posts = Post.find(:all, :conditions => ["posted_at > '#{-3.days.from_now.to_s(:db)}'"])
-#    posts = Post.find(:all, :conditions => ["id = 146 OR id = 147"])
     posts.each do |post|
       begin
-        xpath_num_comment = post.blog.site.xpath_num_comment
-        xpath_rating = post.blog.site.xpath_rating
-        xpath_num_reads = post.blog.site.xpath_num_reads
+        site = post.blog.site
+        xpath_num_comment = site.xpath_num_comment
+        xpath_rating = site.xpath_rating
+        xpath_num_reads = site.xpath_num_reads
 
         # get number of comments
         logger.debug("Updating post #{post.id} - #{post.title}")
-        doc = Hpricot.parse(open(post.url))
+
+        doc = nil
+        begin
+          doc = Hpricot.parse(open(post.url))
+        rescue
+          doc = Nokogiri::HTML(open(post.url))
+        end
 
         unless xpath_num_comment.nil? && xpath_num_comment != ''
-          bn_number = (doc/"#{xpath_num_comment}").to_s.split[0]
+          bn_number = doc.search(xpath_num_comment).inner_text.split[0]
           en_number = translate_number_from_bangla(bn_number)
           puts "Number of comments: #{bn_number} - #{en_number}"
           post.num_comments = en_number
         end
 
-
         # get number of reads
         unless xpath_num_reads.nil? && xpath_num_reads != ''
-          bn_number = (doc/"#{xpath_num_reads}").to_s.split[0]
+          bn_number = doc.search(xpath_num_reads).inner_text.split[0]
           en_number = translate_number_from_bangla(bn_number)
-#          en_number /= 10 # to fix a bug
           puts "Number of reads: #{bn_number} - #{en_number}"
           post.num_reads = en_number
         end
 
-
         # get ratings
-        # get positive rating
         unless xpath_rating.nil? && xpath_rating != ''
-          bn_number_positive = (doc/"#{xpath_rating}").to_s.strip.split[1]
+          # get positive rating
+          bn_number_positive = doc.search(xpath_rating).inner_text.strip.split[1]
           en_number_positive = translate_number_from_bangla(bn_number_positive)
           post.rating_positive = en_number_positive
 
-        # get negative rating
-          bn_number_negative = (doc/"#{xpath_rating}").to_s.strip.split[5]
+          # get negative rating
+          bn_number_negative = doc.search(xpath_rating).inner_text.strip.split[5]
           en_number_negative = translate_number_from_bangla(bn_number_negative)
           post.rating_negative = en_number_negative
           puts "Rating: #{bn_number_positive}/#{bn_number_negative} - #{en_number_positive}/#{en_number_negative}"
