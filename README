@@ -7,7 +7,6 @@ It also crawl the blog post pages to get the comment count, ratings etc. which a
 
 1. Install required gems described in REQUIRED_GEMS
 2. Change database settings in config/database.yml
-3. Run `rake open_id_authentication:db:create`
 4. Run `rake db:migrate`
 
 === How to use

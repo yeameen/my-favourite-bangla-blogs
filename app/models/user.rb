@@ -8,7 +8,8 @@ class User < ActiveRecord::Base
     :order => "users_blogs.created_at DESC"
 
   has_many :users_posts
-  has_many :posts, :through => :users_posts, :select => "posts.*, users_posts.is_read"
+  has_many :posts, :through => :users_posts,
+    :select => "posts.*, users_posts.is_read"
 
   has_many :taggings
   has_many :tags, :through => :taggings, :select => "DISTINCT tags.*"
