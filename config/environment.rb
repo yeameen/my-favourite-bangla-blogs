@@ -60,6 +60,7 @@ Rails::Initializer.run do |config|
   config.gem 'mislav-will_paginate', :version => '~> 2.1', :lib => 'will_paginate',
     :source => 'http://gems.github.com'
   config.gem 'hpricot', :version => '~> 0.6', :lib => 'hpricot'
+  config.gem 'nokogiri', :lib => 'nokogiri'
 end
 
 # AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)

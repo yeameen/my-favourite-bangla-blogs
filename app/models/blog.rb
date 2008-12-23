@@ -69,9 +69,9 @@ class Blog < ActiveRecord::Base
 
         doc = nil
         begin
-          doc = Hpricot.parse(open(post.url))
-        rescue
           doc = Nokogiri::HTML(open(post.url))
+        rescue
+          doc = Hpricot.parse(open(post.url))
         end
 
         unless xpath_num_comment.nil? && xpath_num_comment != ''

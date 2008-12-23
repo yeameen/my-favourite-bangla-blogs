@@ -16,13 +16,14 @@
                 </td>
               </tr>
               <tr>
-                <td>Name:</td>
+                <td>Name: (*required)</td>
                 <td><%= f.text_field :comment, {:id => "recommendation-comment-#{recommendation.id}", :style => "width: 50%"} %></td>
               </tr>
               <tr>
                 <td></td>
                 <td>
-                  <%= submit_to_remote 'recommendation', "Accept", :url => update_recommendation_url(:rec => 'Accept', :id => recommendation.blog.id) %>
+                  <%= submit_to_remote 'recommendation', "Accept", :url => update_recommendation_url(:rec => 'Accept', :id => recommendation.blog.id), :condition => "$(\"recommendation-comment-#{recommendation.id}\").value != ''"
+                     %>
                   <%= submit_to_remote 'recommendation', "Reject", :url => update_recommendation_url(:rec => 'Reject', :id => recommendation.blog.id) %>
                 </td>
               </tr>
