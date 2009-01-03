@@ -136,7 +136,7 @@ class Blog < ActiveRecord::Base
     for i in 1..length/3 do
       cur_digit = p_bn_number[3*i-1].to_i - 166
 #      next if cur_digit > 9 || cur_digit < 0
-      if cur_digit >= 0 && cur_digit <= 9
+      if p_bn_number[3*i-2].to_i == 167 && cur_digit >= 0 && cur_digit <= 9
         en_number *= 10
         en_number += cur_digit
       end
