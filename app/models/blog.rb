@@ -1,9 +1,11 @@
 class Blog < ActiveRecord::Base
   require 'rss/2.0'
   require 'hpricot'
-  require 'open-uri'
-  require 'nokogiri'
-  
+#  require 'open-uri'
+#  require 'nokogiri'
+
+  #TODO: some codes are commented out to meet mor.ph requirement
+
   has_many :users_blogs
   has_many :users, :through => :user_blogs
   belongs_to :site
@@ -63,19 +65,30 @@ class Blog < ActiveRecord::Base
         xpath_num_comment = site.xpath_num_comment
         xpath_rating = site.xpath_rating
         xpath_num_reads = site.xpath_num_reads
+        xpath_post = site.xpath_post                   
+
+        # positions
+        num_comment_position = site.num_comment_position
+        num_read_position = site.num_read_position
+        positive_rating_position = site.positive_rating_position
+        negative_rating_position  = site.negative_rating_position
 
         # get number of comments
         logger.debug("Updating post #{post.id} - #{post.title}")
 
         doc = nil
-        begin
-          doc = Nokogiri::HTML(open(post.url))
-        rescue
+#        begin
+#          doc = Nokogiri::HTML(open(post.url))
+#        rescue
           doc = Hpricot.parse(open(post.url))
+#        end
+
+        unless xpath_post.nil? && xpath_post != ''
+          post.content = doc.search(xpath_post).inner_text
         end
 
         unless xpath_num_comment.nil? && xpath_num_comment != ''
-          bn_number = doc.search(xpath_num_comment).inner_text.split[0]
+          bn_number = doc.search(xpath_num_comment).inner_text.split[num_comment_position.to_i]
           en_number = translate_number_from_bangla(bn_number)
           puts "Number of comments: #{bn_number} - #{en_number}"
           post.num_comments = en_number
@@ -83,7 +96,7 @@ class Blog < ActiveRecord::Base
 
         # get number of reads
         unless xpath_num_reads.nil? && xpath_num_reads != ''
-          bn_number = doc.search(xpath_num_reads).inner_text.split[0]
+          bn_number = doc.search(xpath_num_reads).inner_text.split[num_read_position.to_i]
           en_number = translate_number_from_bangla(bn_number)
           puts "Number of reads: #{bn_number} - #{en_number}"
           post.num_reads = en_number
@@ -92,12 +105,12 @@ class Blog < ActiveRecord::Base
         # get ratings
         unless xpath_rating.nil? && xpath_rating != ''
           # get positive rating
-          bn_number_positive = doc.search(xpath_rating).inner_text.strip.split[1]
+          bn_number_positive = doc.search(xpath_rating).inner_text.strip.split[positive_rating_position.to_i]
           en_number_positive = translate_number_from_bangla(bn_number_positive)
           post.rating_positive = en_number_positive
 
           # get negative rating
-          bn_number_negative = doc.search(xpath_rating).inner_text.strip.split[5]
+          bn_number_negative = doc.search(xpath_rating).inner_text.strip.split[negative_rating_position.to_i]
           en_number_negative = translate_number_from_bangla(bn_number_negative)
           post.rating_negative = en_number_negative
           puts "Rating: #{bn_number_positive}/#{bn_number_negative} - #{en_number_positive}/#{en_number_negative}"
@@ -115,6 +128,9 @@ class Blog < ActiveRecord::Base
 
   private
   def self.translate_number_from_bangla(p_bn_number)
+    # if already in roman digits
+    return p_bn_number.to_i if p_bn_number.to_i != 0
+
     en_number = 0
     length = p_bn_number.length
     for i in 1..length/3 do

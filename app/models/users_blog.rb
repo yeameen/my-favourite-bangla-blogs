@@ -53,8 +53,14 @@ class UsersBlog < ActiveRecord::Base
       blog_name = p_url.gsub(/http\:\/\/|www\.|somewhereinblog\.net\//, '').gsub(/^blog\//, '').split(/[^A-Za-z0-9\-\_]/)[0].strip
       return 1, "http://www.somewhereinblog.net/blog/#{blog_name}"
     when /^(http\:\/\/)?(www\.)?(sachalayatan|socholayoton)/
-      blog_name = p_url.gsub(/http\:\/\/|www\.|sachalayatan\.com\//, '').split(/[^A-Za-z0-9\-\_]/)[0].strip
+      blog_name = p_url.gsub(/http\:\/\/|www\.|sachalayatan\.com\/||socholayoton\.com\//, '').split(/[^A-Za-z0-9\-\_]/)[0].strip
       return 2, "http://www.sachalayatan.com/#{blog_name}"
+    when /^(http\:\/\/)?(www\.)?([A-Za-z0-9\-\_])+\.blogspot\.com/
+      blog_name = p_url.gsub(/http\:\/\/|www\.|blogspot\.com\/[\w\d\/\-\_]+/, '').split(/[^A-Za-z0-9\-\_]/)[0].strip
+      return 3, "http://#{blog_name}.blogspot.com"
+#    when /(http\:\/\/)?(www\.)?prothom-aloblog/
+#      blog_name = p_url.gsub(/http\:\/\/|www\.|prothom-aloblog\.com\/|users\/|base\//, '').split(/[^A-Za-z0-9\-\_]/)[0].strip
+#      return 3, "http://prothom-aloblog.com/users/base/#{blog_name}"
     end
     return nil, nil
   end
