@@ -1,4 +1,4 @@
-<% if @blogs.nil? %>
+<% if @blogs.empty? %>
   <h3>You haven't added any blog yet</h3>
 <% else %>
   <% if !@recommended_blogs.nil? && @recommended_blogs.length > 0 %>
@@ -33,7 +33,11 @@
       <% end %>
     </div>
   <% end %>
+
   <h3>Blogs, you are following</h3>
+  <p>
+    <%= link_to "add new blog", :action => 'edit' %><br />
+  </p>
   <table class="list">
     <tr>
       <th width="70px"><%= link_to "Date added", :sort => {:by => "created_at", :dir => "DESC"} %></th>

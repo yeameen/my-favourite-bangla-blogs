@@ -56,7 +56,9 @@ class MyController < ApplicationController
         }
 
         # check if user is already in the database. if not, create one
-        db_user = User.find_or_create_by_identity_url(openid_user)
+        # TODO: no further openid login
+#        db_user = User.find_or_create_by_identity_url(openid_user)
+        db_user = User.find_by_identity_url(openid_user)
 
         init_session(db_user)
 

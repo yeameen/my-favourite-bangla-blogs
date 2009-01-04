@@ -53,6 +53,8 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
+  config.active_record.observers = :user_observer
+  
 
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
@@ -63,5 +65,7 @@ Rails::Initializer.run do |config|
   config.gem 'hpricot', :version => '~> 0.6', :lib => 'hpricot'
 #  config.gem 'nokogiri', :lib => 'nokogiri'
 end
+
+Time.zone = "Dhaka"
 
 # AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)

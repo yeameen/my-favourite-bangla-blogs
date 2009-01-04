@@ -1,9 +1,9 @@
 module SecurityHelper
 
-  protected
-  def logged_in?()
-    return !session[:user_id].nil?
-  end
+#  protected
+#  def logged_in?()
+#    return !session[:user_id].nil?
+#  end
 
   protected
   def init_session(user)
@@ -15,5 +15,4 @@ module SecurityHelper
   def active_user()
     return User.find(session[:user_id])
   end
-
 end

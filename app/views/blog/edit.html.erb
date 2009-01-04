@@ -3,15 +3,15 @@
 <% form_for :user_blog, :method => :post do |f| %>
 <table>
   <tr>
-   <td>Name:</td>
-      <td>
+   <td>Name(*required)</td>
+      <td>:
        <%= f.text_field :comment %>
        <%= error_message_on :user_blog, :comment %>
       </td>
   </tr>
   <tr>
-    <td>URL:</td>
-    <td>
+    <td>URL</td>
+    <td>:
       <%= f.text_field :url %>
       <%= error_message_on :user_blog, :url %>
     </td>

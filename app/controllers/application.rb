@@ -11,15 +11,16 @@ class ApplicationController < ActionController::Base
   protect_from_forgery :secret => '3de2b0f5d106e42235acd13b1a3e53b7'
 
   include SecurityHelper
+  include AuthenticatedSystem
 
   protected
   def authorize
     unless logged_in?
-      flash[:notice] = "Please log in"
+      flash[:message] = "Please log in"
       # save the URL the user requested so we can hop back to it
       # after login
       session[:jumpto] = request.parameters
-      redirect_to(:controller => "my", :action => "login")
+      redirect_to login_url
     end
   end
 end

@@ -112,10 +112,12 @@ class BlogController < ApplicationController
     else
       logger.debug("\n\nParameter - #{params[:rec]}\n\n")
       if params[:rec] == "Accept"
+        @recommendation_action = "accept"
         logger.debug("\n\nAccepting...")
         blog_recommendation.accept(params[:user_blog][:comment])
       else
         logger.debug("\n\nRejecting...")
+        @recommendation_action = "reject"
 #        blog_recommendation.is_new = false
 #        blog_recommendation.is_rejected = true
         blog_recommendation.reject()
