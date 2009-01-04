@@ -59,6 +59,11 @@ class MyController < ApplicationController
         # TODO: no further openid login
 #        db_user = User.find_or_create_by_identity_url(openid_user)
         db_user = User.find_by_identity_url(openid_user)
+        if db_user.nil?
+          flash[:message] = "No further OpenID signup allowed"
+          redirect_to login_url
+          return
+        end
 
         init_session(db_user)
 
