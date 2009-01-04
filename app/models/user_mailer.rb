@@ -13,6 +13,33 @@ class UserMailer < ActionMailer::Base
     @subject    += 'Your account has been activated!'
     @body[:url]  = "http://#{SITE_NAME}/"
   end
+
+  def update_notification(user, user_new_posts, user_updated_posts)
+    max_count = 15
+    setup_email(user)
+
+
+    # Add unseen posts
+    new_posts = user_new_posts #.inject([]){|all,temp| all << temp.post}
+
+    # Add updated posts
+    updated_posts = []
+    count = 0
+    user_updated_posts.each do |user_post|
+      unless count > max_count
+        post = user_post.post
+        comment_diff = post.num_comments - user_post.num_old_comments
+        if comment_diff > 0
+          updated_posts << user_post
+          count += 1
+        end
+      end
+    end
+    @subject += "Favourite Bangla blogs' daily update"
+    @body[:new_posts] = new_posts
+    @body[:updated_posts] = updated_posts
+    @content_type = "text/html"
+  end
   
   protected
     def setup_email(user)

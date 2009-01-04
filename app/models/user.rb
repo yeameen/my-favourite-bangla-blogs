@@ -83,6 +83,26 @@ class User < ActiveRecord::Base
     return id()
   end
 
+  def self.send_update_notification
+    users = User.all
+    users.each do |user|
+      if !user.email.nil? && user.email != ''
+        user_new_posts = user.users_posts.find(:all,
+                                                :conditions => ["is_read = 0 AND created_at > ?", -3.days.from_now],
+                                                :order => "created_at DESC",
+                                                :limit => 15)
+
+        user_updated_posts = user.users_posts.find(:all,
+                                                    :conditions => ["is_read = 1 AND created_at > ?", -30.days.from_now],
+                                                    :order => "created_at DESC",
+                                                    :limit => 15)
+
+        UserMailer.deliver_update_notification(user, user_new_posts, user_updated_posts)
+      end
+    end
+
+  end
+
   protected
   def make_activation_code
       self.activation_code = self.class.make_token

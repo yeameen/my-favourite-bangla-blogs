@@ -1,0 +1,58 @@
+<%=h @user.login %>,
+
+New posts you may not have seen:
+<% unless @new_posts.empty? %>
+<table border="0" cellpadding="5" cellspacing="5">
+  <thead>
+    <tr>
+      <th>Posted at</th>
+      <th>Blog</th>
+      <th>Title</th>
+      <th>Number of Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @new_posts.each do |user_post| %>
+    <tr>
+      <td><%= time_ago_in_words(user_post.post.created_at) unless user_post.post.posted_at.nil? %>ago</td>
+      <td><%= user_post.comment %></td>
+      <td><%= link_to user_post.post.title, user_post.post.url %></td>
+      <td><%= user_post.post.num_comments %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<% else %>
+    <p>
+      No unread posts
+    </p>
+<% end %>
+<br /><br /><br />
+
+Updated posts (has new comment after you have seen last):
+<% unless @updated_posts.empty? %>
+<table border="0" cellpadding="5" cellspacing="5">
+  <thead>
+    <tr>
+      <th>Posted at</th>
+      <th>Blog</th>
+      <th>Title</th>
+      <th>Number of Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @updated_posts.each do |user_post| %>
+    <tr>
+      <td><%= time_ago_in_words(user_post.post.created_at) unless user_post.post.posted_at.nil? %>ago</td>
+      <td><%= user_post.comment %></td>
+      <td><%= link_to user_post.post.title, user_post.post.url %></td>
+      <td><%= user_post.post.num_comments %>(<%= user_post.post.num_comments - user_post.num_old_comments %> New)</td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<% else %>
+  <p>
+    No updated posts
+  </p>
+<% end %>
