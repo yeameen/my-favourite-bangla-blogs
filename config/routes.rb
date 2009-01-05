@@ -45,6 +45,9 @@ ActionController::Routing::Routes.draw do |map|
   # update recommendation
   map.update_recommendation 'recommendation/update/:rec/:id', :controller => 'blog', :action => 'update_recommendation'
 
+  # read post by key
+  map.read_by_key "/read/:key", :controller => "blog", :action => "read_post_by_key"
+
   # cached and bundled javascript/stylesheet
   map.connect ':asset_dir/:names.:ext',
             :controller => 'assets_bundle',

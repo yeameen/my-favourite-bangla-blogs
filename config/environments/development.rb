@@ -20,3 +20,5 @@ config.action_mailer.raise_delivery_errors = false
 #AssetsBundle.options[:compress] = [:css, :js]
 #AssetsBundle.options[:css_keep_comments] = false
 #AssetsBundle.options[:jsmin] = %W(#{RAILS_ROOT}/vendor/plugins/bundled_assets/lib/jsmin2)
+
+config.action_mailer.default_url_options = { :host => 'localhost:7001' }

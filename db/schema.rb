@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090104051833) do
+ActiveRecord::Schema.define(:version => 20090105173123) do
 
   create_table "blog_recommendations", :force => true do |t|
     t.integer  "user_id"
@@ -146,6 +146,9 @@ ActiveRecord::Schema.define(:version => 20090104051833) do
     t.integer  "status"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "key",              :limit => 100
   end
+
+  add_index "users_posts", ["key"], :name => "hashed_key_index", :unique => true
 
 end

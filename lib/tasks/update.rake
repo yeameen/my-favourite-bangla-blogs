@@ -13,4 +13,12 @@ namespace :update do
   task :notification => :environment do
     User.send_update_notification
   end
+
+  # update all hash keys
+  task :keys => :environment do
+    users_posts = UsersPost.all
+    users_posts.each do |user_post|
+      user_post.add_key if user_post.key.nil? || user_post.key.to_s == ""
+    end
+  end
 end

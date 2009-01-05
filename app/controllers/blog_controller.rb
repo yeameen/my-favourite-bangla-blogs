@@ -1,7 +1,7 @@
 class BlogController < ApplicationController
   layout "template"
   
-  before_filter :authorize, :except => [:view_post]
+  before_filter :authorize, :except => [:view_post, :read_post_by_key]
   
   def index
     redirect_to :action => :list
@@ -39,6 +39,23 @@ class BlogController < ApplicationController
       end
     end
     redirect_to post.url
+  end
+
+  def read_post_by_key
+    key = params[:key].to_s
+    return if key == ''
+
+    user_post = UsersPost.find_by_key(key)
+    if user_post.nil?
+      render :text => "could not find the post"
+      return
+    else
+      user_post.is_read = true
+      user_post.num_old_comments = user_post.post.num_comments
+      user_post.save
+      redirect_to user_post.post.url
+      return
+    end
   end
 
   def edit

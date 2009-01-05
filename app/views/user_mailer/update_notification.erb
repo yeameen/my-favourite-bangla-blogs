@@ -16,7 +16,7 @@ New posts you may not have seen:
     <tr>
       <td><%= time_ago_in_words(user_post.post.created_at) unless user_post.post.posted_at.nil? %>ago</td>
       <td><%= user_post.comment %></td>
-      <td><%= link_to user_post.post.title, user_post.post.url %></td>
+      <td><%= link_to user_post.post.title, read_by_key_url(:key => user_post.key) %></td>
       <td><%= user_post.post.num_comments %></td>
     </tr>
   <% end %>
@@ -45,7 +45,7 @@ Updated posts (has new comment after you have seen last):
     <tr>
       <td><%= time_ago_in_words(user_post.post.created_at) unless user_post.post.posted_at.nil? %>ago</td>
       <td><%= user_post.comment %></td>
-      <td><%= link_to user_post.post.title, user_post.post.url %></td>
+      <td><%= link_to user_post.post.title, read_by_key_url(:key => user_post.key) %></td>
       <td><%= user_post.post.num_comments %>(<%= user_post.post.num_comments - user_post.num_old_comments %> New)</td>
     </tr>
   <% end %>
