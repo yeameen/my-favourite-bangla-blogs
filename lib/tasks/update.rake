@@ -14,7 +14,7 @@ namespace :update do
     User.send_update_notification
   end
 
-  # update all hash keys
+  desc "update all hash keys"
   task :keys => :environment do
     users_posts = UsersPost.all
     users_posts.each do |user_post|
