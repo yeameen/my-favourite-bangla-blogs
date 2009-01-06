@@ -1,5 +1,3 @@
-require 'ostruct'
-
 class MyController < ApplicationController
 
   def index

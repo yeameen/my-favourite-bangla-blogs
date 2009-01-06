@@ -3,14 +3,34 @@
 <% # include header part %>
 <%= render(:partial => "layouts/template/header") %>
 <body>
-<div class="main">
-    <%= render(:partial => "layouts/template/top_menu") %>
-    
-
-    <% if flash[:notice] -%>
-        <div id="notice" ><%= flash[:notice] %></div>
-    <% end -%>
+<div class="flash <%= flash[:type]? flash[:type] : '' %>" style="background: #FFF3B3 none repeat scroll 0%; width: 50%; border: solid 1px orange; margin: auto;display: <%= (flash[:message])? 'block' : 'none'%>;">
+  <%= flash[:message] %>
+</div>
+<div id="header">
+  <ul id="primary">
+    <% unless logged_in? %>
+      <li><%= link_to_unless_current("Login", login_url) {"<span>Login</span>"} %></li>
+      <li><%= link_to_unless_current("Signup", signup_url) {"<span>Signup</span>"} %></li>
+    <% else %>
+      <li>
+        <%= link_to_unless_current("Blogs", :controller => "blog", :action => "list") {"<span>Blogs</span>"} %>
+        <ul id="secondary">
+          <li><%= link_to_unless_current("Add new blog", :controller => "blog", :action => "edit") {"<span>Add new blog</span>"} %></li>
+        </ul>
+      </li>
+      <li><%= link_to_unless_current("Posts", :controller => "blog", :action => "posts") {"<span>Posts</span>"} %></li>
+      <li><%= link_to("Logout", logout_url) %></li>
+    <% end %>
+  </ul>
+  <%# render(:partial => "layouts/template/top_menu") %>
+</div>
+<div class="main" id="main">
+  <div id="contents">
+    <!--<% if flash[:notice] -%>-->
+        <!--<div id="notice" ><%= flash[:notice] %></div>-->
+    <!--<% end -%>-->
     <%= yield %>
+  </div>
 </div>
 </body>
 </html>
