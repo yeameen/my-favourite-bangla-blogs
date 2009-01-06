@@ -28,7 +28,7 @@ class MyController < ApplicationController
     if using_open_id?
       authenticate
     else
-      flash[:error] = "You must provide an OpenID URL"
+      set_flash_message(Constant::Flash::MESSAGE_REQUIRE_VALID_OPENID, Constant::Flash::TYPE_WARNING)
       redirect_to :action => "index" and return
     end
   end
@@ -58,7 +58,7 @@ class MyController < ApplicationController
 #        db_user = User.find_or_create_by_identity_url(openid_user)
         db_user = User.find_by_identity_url(openid_user[:identity_url])
         if db_user.nil?
-          flash[:message] = "No further OpenID signup allowed"
+          set_flash_message(Constant::Flash::MESSAGE_OPENID_SIGNUP_STOPPED, Constant::Flash::TYPE_WARNING)
           redirect_to login_url
           return
         end
@@ -69,7 +69,7 @@ class MyController < ApplicationController
         session[:jumpto] = nil
         redirect_to(jumpto) and return
       else
-        flash[:error] = result.message
+        set_flash_message(result.message, Constant::Flash::TYPE_ERROR)
         redirect_to :action => "index"
       end
     end

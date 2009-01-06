@@ -71,8 +71,7 @@ class BlogController < ApplicationController
       @user_blog.attributes = params[:user_blog]
 
       unless @user_blog.save
-        flash[:notice] = "Couldn't save blog"
-
+        set_flash_message(Constant::Flash::MESSAGE_BLOG_ERROR, Constant::Flash::TYPE_ERROR)
       else # update recommendation
         blog_recommendation = BlogRecommendation.find(:first,
                                                       :conditions => {:blog_id => @user_blog.blog.id,

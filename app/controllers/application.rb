@@ -16,11 +16,17 @@ class ApplicationController < ActionController::Base
   protected
   def authorize
     unless logged_in?
-      flash[:message] = "Please log in"
+      set_flash_message(Constant::Flash::MESSAGE_REQUIRE_LOGIN, Constant::Flash::TYPE_NOTIFICATION)
       # save the URL the user requested so we can hop back to it
       # after login
       session[:jumpto] = request.parameters
       redirect_to login_url
     end
+  end
+
+  protected
+  def set_flash_message(p_message, p_type = Constant::Flash::TYPE_NOTIFICATION)
+    flash[:message] = p_message
+    flash[:type] = p_type
   end
 end

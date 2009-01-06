@@ -14,10 +14,10 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     success = @user && @user.save
     if success && @user.errors.empty?
-      flash[:notice] = "Thanks for signing up!  We're sending you an email with your activation code."
+      set_flash_message(Constant::Flash::MESSAGE_VERIFY_EMAIL)
       redirect_back_or_default('/')
     else
-      flash[:error]  = "We couldn't set up that account, sorry.  Please try again, or contact an admin (link is above)."
+      set_flash_message(Constant::Flash::MESSAGE_ERROR_CREATING_ACCOUNT, Constant::Flash::TYPE_ERROR)
       render :action => 'new'
     end
   end
@@ -28,13 +28,13 @@ class UsersController < ApplicationController
     case
     when (!params[:activation_code].blank?) && user && !user.active?
       user.activate!
-      flash[:message] = "Signup complete! Please sign in to continue."
+      set_flash_message(Constant::Flash::MESSAGE_EMAIL_VERIFIED)
       redirect_to '/login'
     when params[:activation_code].blank?
-      flash[:message] = "The activation code was missing.  Please follow the URL from your email."
+      set_flash_message(Constant::Flash::MESSAGE_MISSING_ACTIVATION, Constant::Flash::TYPE_WARNING)
       redirect_back_or_default('/')
-    else 
-      flash[:message]  = "We couldn't find a user with that activation code -- check your email? Or maybe you've already activated -- try signing in."
+    else
+      set_flash_message(Constant::Flash::MESSAGE_WRONG_ACTIVATION, Constant::Flash::TYPE_WARNING)
       redirect_back_or_default('/')
     end
   end

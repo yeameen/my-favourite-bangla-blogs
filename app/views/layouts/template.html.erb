@@ -3,10 +3,13 @@
 <% # include header part %>
 <%= render(:partial => "layouts/template/header") %>
 <body>
-<div class="flash <%= flash[:type]? flash[:type] : '' %>" style="background: #FFF3B3 none repeat scroll 0%; width: 50%; border: solid 1px orange; margin: auto;display: <%= (flash[:message])? 'block' : 'none'%>;">
+<div class="flash <%= flash[:type]? flash[:type] : '' %>" style="width: 50%; border: solid 1px orange; margin: auto;display: <%= (flash[:message])? 'block' : 'none'%>;">
   <%= flash[:message] %>
 </div>
 <div id="header">
+  <% if logged_in? %>
+    Welcome, <%= current_user.login %>
+  <% end %>
   <ul id="primary">
     <% unless logged_in? %>
       <li><%= link_to_unless_current("Login", login_url) {"<span>Login</span>"} %></li>
@@ -26,9 +29,6 @@
 </div>
 <div class="main" id="main">
   <div id="contents">
-    <!--<% if flash[:notice] -%>-->
-        <!--<div id="notice" ><%= flash[:notice] %></div>-->
-    <!--<% end -%>-->
     <%= yield %>
   </div>
 </div>

@@ -1,12 +1,11 @@
 table.list {
   border: 0pt;
   margin: 0pt;
-  width:90%;
+  width: 95%;
   border-top:1px solid #e5eff8;
   border-right:1px solid #e5eff8;
   margin:1em auto;
   border-collapse:collapse;
-  /*width: 100%*/
 }
 
 table.list caption {
@@ -35,7 +34,6 @@ table.list td {
   border-bottom:1px solid #d5dfe8;
   border-left:1px solid #e5eff8;
   padding:.3em 1em;
-  /*text-align:center;*/
 }
 
 
@@ -70,4 +68,16 @@ table.recommendation td {
   white-space: nowrap;
   padding:.1em 1em;
 
+}
+
+.notification {
+  background: #D0F5A9 none repeat scroll 0%;
+}
+
+.warning {
+  background: #F4FA58 none repeat scroll 0%;
+}
+
+.error {
+  background: #F5D0A9 none repeat scroll 0%;
 }
