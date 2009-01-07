@@ -28,7 +28,7 @@ class UserMailer < ActionMailer::Base
     user_updated_posts.each do |user_post|
       unless count > max_count
         post = user_post.post
-        comment_diff = post.num_comments - user_post.num_old_comments
+        comment_diff = post.num_comments.to_i - user_post.num_old_comments.to_i
         if comment_diff > 0
           updated_posts << user_post
           count += 1
