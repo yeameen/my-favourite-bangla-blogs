@@ -86,7 +86,7 @@ class User < ActiveRecord::Base
   def self.send_update_notification
     users = User.all
     users.each do |user|
-      if !user.email.nil? && user.email != ''
+      if user.email_notification && !user.email.nil? && user.email != ''
         user_new_posts = user.users_posts.find(:all,
                                                 :conditions => ["is_read = 0 AND created_at > ?", -1.days.from_now],
                                                 :order => "created_at DESC",
@@ -101,11 +101,10 @@ class User < ActiveRecord::Base
         end
       end
     end
-
   end
 
   protected
   def make_activation_code
-      self.activation_code = self.class.make_token
+    self.activation_code = self.class.make_token
   end
 end

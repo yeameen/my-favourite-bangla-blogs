@@ -22,6 +22,7 @@
         </ul>
       </li>
       <li><%= link_to_unless_current("Posts", :controller => "blog", :action => "posts") {"<span>Posts</span>"} %></li>
+      <li><%= link_to_unless_current("Settings", edit_user_path) {"<span>Settings</span>"} %></li>
       <li><%= link_to("Logout", logout_url) %></li>
     <% end %>
   </ul>

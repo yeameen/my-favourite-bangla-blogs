@@ -35,6 +35,8 @@ ActionController::Routing::Routes.draw do |map|
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   map.activate '/activate/:activation_code', :controller => 'users', :action => 'activate', :activation_code => nil
 
+  map.edit_user '/settings', :controller => "users", :action => "edit"
+
   map.tag "tag/:tag", :controller => "blog", :action => "tag"
 
   # See how all your routes lay out with "rake routes"

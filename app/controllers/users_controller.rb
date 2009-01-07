@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   # Be sure to include AuthenticationSystem in Application Controller instead
 #  include AuthenticatedSystem
   layout "template"
+  before_filter :authorize, :only => [:edit]
   
 
   # render new.rhtml
@@ -36,6 +37,26 @@ class UsersController < ApplicationController
     else
       set_flash_message(Constant::Flash::MESSAGE_WRONG_ACTIVATION, Constant::Flash::TYPE_WARNING)
       redirect_back_or_default('/')
+    end
+  end
+
+  def edit
+    # list of editable attributes
+    allowed_attributes = [:email_notification]
+
+    @user = current_user()
+    
+    if request.post?
+      if params[:user]
+        allowed_attributes.each do |key|
+          @user.update_attribute(key, params[:user][key])
+        end
+        @user.save
+        set_flash_message(Constant::Flash::MESSAGE_SETTINGS_UPDATED)
+        redirect_to root_url and return
+      else
+        set_flash_message(Constant::Flash::MESSAGE_MISSING_PARAMETER, Constant::Flash::TYPE_WARNING)
+      end
     end
   end
 end
